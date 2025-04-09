@@ -2,82 +2,108 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
     android:background="#FAFAFA">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
 
         <!-- Header -->
-        <TextView
-            android:id="@+id/tvTitle"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Thực hành thuật toán Bubble Sort"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:gravity="center"
-            android:paddingBottom="12dp"/>
+            android:orientation="vertical"
+            android:layout_marginBottom="16dp">
 
-        <!-- Đề bài -->
-        <TextView
-            android:text="Đề bài"
-            android:textStyle="bold"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-        <TextView
-            android:id="@+id/tvDeBai"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Đây là đề bài"
-            android:paddingBottom="12dp"/>
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Thực hành lập trình"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="#1976D2"
+                android:gravity="center"
+                android:layout_marginBottom="8dp"/>
 
-        <!-- Kết quả sau khi chạy -->
-        <TextView
-            android:text="Kết quả sau khi chạy code"
-            android:textStyle="bold"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-        <EditText
-            android:id="@+id/etKetQua"
-            android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:background="#EEEEEE"
-            android:gravity="start|top"
-            android:inputType="textMultiLine"
-            android:enabled="false"
-            android:padding="10dp"
-            android:layout_marginBottom="12dp" />
+            <!-- Đề bài -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/edittext_border"
+                android:padding="12dp">
 
-        <!-- Chọn ngôn ngữ -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Đề bài"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="#424242"/>
+
+                    <ImageButton
+                        android:id="@+id/btnToggleDeBai"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:src="@drawable/ic_expand_more"
+                        android:contentDescription="Toggle đề bài"/>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvDeBai"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Nhập code của bạn vào ô bên dưới"
+                    android:textSize="16sp"
+                    android:textColor="#757575"
+                    android:visibility="gone"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Language Selection -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="start|center_vertical"
-            android:layout_marginBottom="8dp">
+            android:layout_marginBottom="16dp">
 
             <TextView
-                android:text="Chọn ngôn ngữ"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"/>
+                android:text="Ngôn ngữ:"
+                android:textSize="16sp"
+                android:textColor="#424242"
+                android:layout_gravity="center_vertical"/>
 
             <Spinner
                 android:id="@+id/spinnerLanguage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-            <ImageView
-                android:src="@drawable/ic_robot"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginStart="8dp"/>
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="16dp"
+                android:background="@drawable/spinner_background"/>
         </LinearLayout>
 
-        <!-- Nhập code -->
+        <!-- Code Editor -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Code:"
+            android:textSize="16sp"
+            android:textColor="#424242"
+            android:layout_marginBottom="8dp"/>
+
         <EditText
             android:id="@+id/etCode"
             android:layout_width="match_parent"
@@ -89,20 +115,81 @@
             android:padding="12dp"
             android:layout_marginBottom="16dp"/>
 
+        <!-- Input -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Input:"
+                    android:textSize="16sp"
+                    android:textColor="#424242"/>
+
+                <ImageButton
+                    android:id="@+id/btnToggleInput"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_expand_more"
+                    android:contentDescription="Toggle input"/>
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Nhập dữ liệu đầu vào"
+                android:inputType="textMultiLine"
+                android:background="@drawable/edittext_border"
+                android:padding="12dp"
+                android:visibility="gone"/>
+        </LinearLayout>
+
+        <!-- Output -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Kết quả:"
+            android:textSize="16sp"
+            android:textColor="#424242"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:id="@+id/etKetQua"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:background="#EEEEEE"
+            android:gravity="start|top"
+            android:inputType="textMultiLine"
+            android:enabled="false"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp"/>
+
         <!-- Buttons -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center"
-            android:weightSum="2">
+            android:gravity="center">
 
             <Button
                 android:id="@+id/btnRun"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Thực thi"
+                android:text="Run"
+                android:textSize="16sp"
                 android:backgroundTint="#1976D2"
                 android:textColor="#FFFFFF"
                 android:layout_marginEnd="8dp"/>
@@ -112,7 +199,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Nộp bài"
+                android:text="Submit"
+                android:textSize="16sp"
                 android:backgroundTint="#388E3C"
                 android:textColor="#FFFFFF"/>
         </LinearLayout>

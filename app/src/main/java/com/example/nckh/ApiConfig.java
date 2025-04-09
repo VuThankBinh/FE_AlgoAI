@@ -2,7 +2,7 @@ package com.example.nckh;
 
 public class ApiConfig {
     // Base URL của API
-    public static final String BASE_URL = "http://192.168.1.10:8080"; // Thay thế bằng URL thực tế của API
+    public static final String BASE_URL = "http://192.168.1.10"; // Thay thế bằng URL thực tế của API
 
     // Các endpoint
     public static final String REGISTER_ENDPOINT = "/api/user/register";
@@ -32,9 +32,9 @@ public class ApiConfig {
 
 
 
-
+    public static  String getSocketUrl (){return BASE_URL +":5000";  }
     // Phương thức để lấy URL đầy đủ
     public static String getFullUrl(String endpoint) {
-        return BASE_URL + endpoint;
+        return BASE_URL +":8080"+ endpoint;
     }
 } 
