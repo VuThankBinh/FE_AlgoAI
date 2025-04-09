@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:padding="10dp"
+    tools:context=".sendOTP">
+
+    <ImageView
+        android:layout_width="200dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="70dp"
+        android:src="@drawable/logo" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="26dp"
+        android:text="Vui lòng nhập mã xác nhận"
+        android:textSize="20dp"
+        android:layout_gravity="center"
+        android:textStyle="bold"/>
+        <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:text="Mã xác nhận đã được gửi đến email"
+        android:textSize="20dp"
+        android:layout_gravity="center">
+    </TextView>
+    <TextView
+        android:id="@+id/emailSendOTP"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="binhthanh.vubc269@gmail.com"
+        android:textSize="20dp"
+        android:textColor="@color/colorPrimary"
+        android:layout_gravity="center">
+    </TextView>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:text="Vui lòng nhập mã xác nhận bên dưới"
+        android:textSize="20dp"
+        android:layout_gravity="center">
+    </TextView>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:layout_marginTop="30dp"
+        >
+        <EditText
+            android:id="@+id/otpDigit1"
+            style="@style/OtpEditText"
+            />
+
+        <EditText
+            android:id="@+id/otpDigit2"
+            style="@style/OtpEditText"
+            />
+
+        <EditText
+            android:id="@+id/otpDigit3"
+            style="@style/OtpEditText"
+            />
+
+        <EditText
+            android:id="@+id/otpDigit4"
+            style="@style/OtpEditText"
+            />
+
+        <EditText
+            android:id="@+id/otpDigit5"
+            style="@style/OtpEditText"
+            />
+
+        <EditText
+            android:id="@+id/otpDigit6"
+            style="@style/OtpEditText"
+            />
+    </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/sendOTP"
+        android:text="Gửi mã OTP"
+        android:textAlignment="viewEnd"
+        android:layout_margin="5dp"
+        android:textSize="14dp"
+        android:textColor="@color/colorPrimary">
+    </TextView>
+    <Button
+        android:layout_gravity="center"
+        android:id="@+id/btnVerifyOTP"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Xác nhận"
+        android:textSize="20dp"
+
+        android:layout_marginTop="20dp">
+    </Button>
+
+</LinearLayout>
