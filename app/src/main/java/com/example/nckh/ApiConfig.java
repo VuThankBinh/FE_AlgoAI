@@ -28,6 +28,9 @@ public class ApiConfig {
 
     public static final String POST_UPLOAD_FILE_ENDPOINT = "/api/upload/file";
 
+    public static final String GET_CAU_HOI_ENDPOINT = "/api/bai-tap-quiz/theo-muc-do";
+
+
 
 
     // Phương thức để lấy URL đầy đủ

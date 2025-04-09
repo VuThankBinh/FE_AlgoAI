@@ -87,7 +87,7 @@ public class quiz extends AppCompatActivity {
 
     private void loadCauHoi() {
         Request request = new Request.Builder()
-                .url(ApiConfig.getFullUrl(ApiConfig.GET_CAU_HOI_ENDPOINT + "?mucDo=" + mucDoHienTai))
+                .url(ApiConfig.getFullUrl(ApiConfig.GET_CAU_HOI_ENDPOINT + "?mucDo=" + mucDoHienTai +"&idBaiHoc=2"))
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
@@ -139,10 +139,8 @@ public class quiz extends AppCompatActivity {
 
         // Hiển thị 10 câu hỏi ngẫu nhiên
         Random random = new Random();
-        for (int i = 0; i < Math.min(10, danhSachCauHoi.size()); i++) {
-            int index = random.nextInt(danhSachCauHoi.size());
-            CauHoi cauHoi = danhSachCauHoi.get(index);
-            danhSachCauHoi.remove(index);
+        for (int i = 0; i < 10; i++) {
+            CauHoi cauHoi = danhSachCauHoi.get(i);
 
             View view = getLayoutInflater().inflate(R.layout.item_cauhoi, questionContainer, false);
             TextView tvCauHoi = view.findViewById(R.id.tvCauHoi);
