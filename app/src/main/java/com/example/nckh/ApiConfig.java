@@ -22,6 +22,13 @@ public class ApiConfig {
     public  static final String GET_BAI_HOC_ENDPOINT = "/api/tien-do/bai-hoc?";
 
     public static final String get_imagge_ENDPOINT = "/uploads/images/";
+    public static final String POST_Doi_Pass_ENDPOINT = "/api/user/doi-mat-khau";
+
+    public static final String POST_UPDATE_USER_ENDPOINT = "/api/user/cap-nhat-thong-tin";
+
+    public static final String POST_UPLOAD_FILE_ENDPOINT = "/api/upload/file";
+
+
 
     // Phương thức để lấy URL đầy đủ
     public static String getFullUrl(String endpoint) {

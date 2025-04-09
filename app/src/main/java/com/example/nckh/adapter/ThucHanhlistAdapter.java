@@ -3,6 +3,7 @@ package com.example.nckh.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -17,23 +18,23 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class BaiHocAdapterNgang extends RecyclerView.Adapter<BaiHocAdapterNgang.BaiHocViewHolder> {
+public class ThucHanhlistAdapter extends RecyclerView.Adapter<ThucHanhlistAdapter.ThucHanhlistViewHolder> {
 
     private List<BaiHoc> baiHocList;
 
-    public BaiHocAdapterNgang(List<BaiHoc> baiHocList) {
+    public ThucHanhlistAdapter(List<BaiHoc> baiHocList) {
         this.baiHocList = baiHocList;
     }
 
     @NonNull
     @Override
-    public BaiHocViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_baihoc_ngang, parent, false);
-        return new BaiHocViewHolder(view);
+    public ThucHanhlistViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_baihoc_thuchanh, parent, false);
+        return new ThucHanhlistViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull BaiHocViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ThucHanhlistViewHolder holder, int position) {
         BaiHoc baiHoc = baiHocList.get(position);
         holder.tvTieuDe.setText(baiHoc.getTieuDe());
 
@@ -46,31 +47,7 @@ public class BaiHocAdapterNgang extends RecyclerView.Adapter<BaiHocAdapterNgang.
             trangThai = "Đã học";
         }
         holder.tvTrangThai.setText("Trạng thái: " + trangThai);
-        if(baiHoc.isDaLamQuiz()){
-            String mucdo="";
-            if(baiHoc.getMucDoQuiz().equals("co_ban")) mucdo="Cơ bản";
-            else if(baiHoc.getMucDoQuiz().equals("trung_binh")) mucdo="Trung bình";
-            else if(baiHoc.getMucDoQuiz().equals("nang_cao")) mucdo="Nâng cao";
-            holder.noidung1.setText("Trắc nghiệm: "+baiHoc.getDiemQuiz() +" điểm ");
-            holder.tvDiem1.setText("Mức độ: "+mucdo);
-        }
-        else {
-            holder.noidung1.setText("Trắc nghiệm: Chưa làm");
-            holder.tvDiem1.setText("");
-        }
-        if(baiHoc.isDaLamCode()){
 
-            String mucdo="";
-            if(baiHoc.getMucDoCode().equals("co_ban")) mucdo="Cơ bản";
-            else if(baiHoc.getMucDoCode().equals("trung_binh")) mucdo="Trung bình";
-            else if(baiHoc.getMucDoCode().equals("nang_cao")) mucdo="Nâng cao";
-            holder.noidung2.setText("Code: "+baiHoc.getDiemCode() +" điểm ");
-            holder.tvDiem2.setText("Mức độ: "+mucdo);
-        }
-        else {
-            holder.noidung2.setText("Code: Chưa làm");
-            holder.tvDiem2.setText("");
-        }
         if (baiHoc.getAnhBaiHoc() != null && !baiHoc.getAnhBaiHoc().isEmpty()) {
             Picasso.get()
                     .load(ApiConfig.get_imagge_ENDPOINT + baiHoc.getAnhBaiHoc())
@@ -87,21 +64,24 @@ public class BaiHocAdapterNgang extends RecyclerView.Adapter<BaiHocAdapterNgang.
         return baiHocList.size();
     }
 
-    public static class BaiHocViewHolder extends RecyclerView.ViewHolder {
+    public static class ThucHanhlistViewHolder extends RecyclerView.ViewHolder {
         ImageView imgBaiHoc;
         TextView tvTieuDe, tvTrangThai, tvDiem1, tvDiem2, noidung1, noidung2;
         LinearLayout allinner_baihocgannhat;
+        Button quiz, code;
 
-        public BaiHocViewHolder(@NonNull View itemView) {
+        public ThucHanhlistViewHolder(@NonNull View itemView) {
             super(itemView);
             imgBaiHoc = itemView.findViewById(R.id.img_baihoc);
             tvTieuDe = itemView.findViewById(R.id.titlegannhat);
             tvTrangThai = itemView.findViewById(R.id.tinhtrangbaigannhat);
             allinner_baihocgannhat = itemView.findViewById(R.id.allinner_baihocgannhat);
-            tvDiem1 = itemView.findViewById(R.id.diem1);
-            tvDiem2 = itemView.findViewById(R.id.diem2);
-            noidung1 = itemView.findViewById(R.id.noidung1);
-            noidung2 = itemView.findViewById(R.id.noidung2);
+//            tvDiem1 = itemView.findViewById(R.id.diem1);
+//            tvDiem2 = itemView.findViewById(R.id.diem2);
+//            noidung1 = itemView.findViewById(R.id.noidung1);
+//            noidung2 = itemView.findViewById(R.id.noidung2);
+            quiz = itemView.findViewById(R.id.btn_tracnghiem);
+            code = itemView.findViewById(R.id.btn_code);
         }
     }
 }

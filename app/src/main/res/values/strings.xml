@@ -1,3 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">NCKH</string>
+    <string-array name="muc_do">
+        <item>Cơ bản</item>
+        <item>Trung bình</item>
+        <item>Nâng cao</item>
+    </string-array>
 </resources>

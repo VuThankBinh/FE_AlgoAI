@@ -3,6 +3,7 @@ package com.example.nckh;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -302,12 +303,16 @@ public class MainActivity extends AppCompatActivity {
                     
                     String status = jsonResponse.getString("status");
                     String message = jsonResponse.getString("message");
-                    JSONObject data = jsonResponse.getJSONObject("data");
+                    JSONObject data = jsonResponse.has("data") && !jsonResponse.isNull("data")
+                            ? jsonResponse.getJSONObject("data")
+                            : null;
 
                     runOnUiThread(() -> {
                         if (response.isSuccessful()) {
                             // Lưu thông tin đăng nhập
+                            if(data!=null){
                             saveLoginInfo(data);
+                            }
                             showCustomToast(message, R.drawable.baseline_check_24);
                             // Chuyển đến màn hình chính
                             startActivity(new Intent(MainActivity.this, home.class));

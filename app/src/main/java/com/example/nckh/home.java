@@ -52,6 +52,7 @@ public class home extends AppCompatActivity {
     private OkHttpClient client = new OkHttpClient();
     private SharedPreferences sharedPreferences;
     private RecyclerView recyclerViewLessons;
+    private LinearLayout liner_lythuyet, liner_code;
     private BaiHocAdapter baiHocAdapter;
     private List<BaiHoc> baiHocList = new ArrayList<>();
     private Integer id_bai=0;
@@ -71,7 +72,22 @@ public class home extends AppCompatActivity {
         tvStatus = findViewById(R.id.tvStatus);
         avt = findViewById(R.id.avt);
         recyclerViewLessons = findViewById(R.id.recyclerViewLessons);
-        
+        liner_code=findViewById(R.id.line_code);
+        liner_lythuyet=findViewById(R.id.line_lythuyet);
+        liner_lythuyet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(home.this, lythuyet.class);
+                startActivity(intent);
+            }
+        });
+        liner_code.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(home.this, thuchanhlist.class);
+                startActivity(intent);
+            }
+        });
         // Cấu hình RecyclerView
         recyclerViewLessons.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewLessons.setNestedScrollingEnabled(false);
@@ -118,6 +134,7 @@ public class home extends AppCompatActivity {
 
         // Xử lý Bottom Navigation
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        bottomNavigationView.setSelectedItemId(R.id.navigation_home);
         bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -135,6 +152,9 @@ public class home extends AppCompatActivity {
 //                    finish();
                     return true;
                 } else if (itemId == R.id.navigation_profile) {
+                    Intent intent = new Intent(home.this, taikhoan.class);
+                    startActivity(intent);
+//                    finish();
                     return true;
                 }
                 return false;
@@ -170,10 +190,13 @@ public class home extends AppCompatActivity {
                     try {
                         String responseData = response.body().string();
                         JSONObject jsonObject = new JSONObject(responseData);
-                        
+                        sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString("name", jsonObject.getString("tenDangNhap"));
+                        editor.apply();
                         String name = jsonObject.getString("tenDangNhap");
                         String email = jsonObject.getString("email");
-                        String avatar = jsonObject.getString("tenDangNhap");
+                        String avatar = jsonObject.getString("anhDaiDien");
                         System.out.println("name: "+name);
 
                         runOnUiThread(() -> {
@@ -182,7 +205,7 @@ public class home extends AppCompatActivity {
 
                             if (avatar != null && !avatar.isEmpty()) {
                                 Picasso.get()
-                                        .load(avatar)
+                                        .load(ApiConfig.getFullUrl(ApiConfig.get_imagge_ENDPOINT+avatar))
                                         .placeholder(R.drawable.user) // trong khi tải
                                         .error(R.drawable.user)       // lỗi thì dùng ảnh mặc định
                                         .into(avt);

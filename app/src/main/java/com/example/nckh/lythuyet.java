@@ -124,6 +124,9 @@ public class lythuyet extends AppCompatActivity {
                     finish();
                     return true;
                 } else if (itemId == R.id.navigation_profile) {
+                    Intent intent = new Intent(lythuyet.this, taikhoan.class);
+                    startActivity(intent);
+                    finish();
                     return true;
                 }
                 return false;
@@ -176,14 +179,21 @@ public class lythuyet extends AppCompatActivity {
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
                             BaiHoc baiHoc = new BaiHoc(
-                                    jsonObject.getString("id"),
-                                    jsonObject.getString("tieuDe"),
-                                    jsonObject.getString("noiDung"),
-                                    jsonObject.getString("linkYoutube"),
-                                    jsonObject.getString("linkMoTa"),
-                                    jsonObject.getString("trangThai"),
-                                    jsonObject.getString("anhBaiHoc")
+                                    jsonObject.optString("id", null),
+                                    jsonObject.optString("tieuDe", null),
+                                    jsonObject.optString("noiDung", null),
+                                    jsonObject.optString("linkYoutube", null),
+                                    jsonObject.optString("linkMoTa", null),
+                                    jsonObject.optString("trangThai", null),
+                                    jsonObject.optString("anhBaiHoc", null),
+                                    jsonObject.optBoolean("daLamQuiz", false),
+                                    jsonObject.has("diemQuiz") && !jsonObject.isNull("diemQuiz") ? jsonObject.optInt("diemQuiz", 0) : null,
+                                    jsonObject.optString("mucDoQuiz", null),
+                                    jsonObject.optBoolean("daLamCode", false),
+                                    jsonObject.optString("diemCode", null),
+                                    jsonObject.optString("mucDoCode", null)
                             );
+
                             list.add(baiHoc);
                         }
 

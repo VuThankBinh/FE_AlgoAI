@@ -220,7 +220,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:orientation="horizontal"
-                            android:gravity="center">
+                            android:gravity="center"
+                            android:id="@+id/line_lythuyet">
 
                             <ImageView
                                 android:layout_width="48dp"
@@ -249,7 +250,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:orientation="horizontal"
-                            android:gravity="center">
+                            android:gravity="center"
+                            android:id="@+id/line_code">
 
                             <ImageView
                                 android:layout_width="48dp"
