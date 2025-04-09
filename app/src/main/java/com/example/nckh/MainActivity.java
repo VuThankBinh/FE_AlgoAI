@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
                     runOnUiThread(() -> {
                         if (response.isSuccessful()) {
                             showCustomToast(message, R.drawable.baseline_check_24);
-                            Intent intent = new Intent(MainActivity.this, home.class);
+                            Intent intent = new Intent(MainActivity.this, sendOTP.class);
                             intent.putExtra("email",email);
                             startActivity(intent);
 
@@ -310,7 +310,7 @@ public class MainActivity extends AppCompatActivity {
                             saveLoginInfo(data);
                             showCustomToast(message, R.drawable.baseline_check_24);
                             // Chuyển đến màn hình chính
-                            startActivity(new Intent(MainActivity.this, sendOTP.class));
+                            startActivity(new Intent(MainActivity.this, home.class));
                             finish();
                         } else {
                             showCustomToast("Lỗi: " + message, R.drawable.baseline_error_24);

@@ -227,7 +227,9 @@ public class home extends AppCompatActivity {
                         System.out.println("responseData:"+responseData);
                         if(responseData.isEmpty())
                             System.out.println(21123);
-                        JSONObject jsonObject = new JSONObject(responseData);
+                        JSONObject jsonObject1 = new JSONObject(responseData);
+                        String jsonObject2 = jsonObject1.getString("data");
+                        JSONObject jsonObject = new JSONObject(jsonObject2);
 
                         String id_baihoc=jsonObject.getString("id");
                         String title = jsonObject.getString("tieuDe");

@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -65,12 +66,14 @@ public class BaiHocAdapter extends RecyclerView.Adapter<BaiHocAdapter.BaiHocView
     public static class BaiHocViewHolder extends RecyclerView.ViewHolder {
         ImageView imgBaiHoc;
         TextView tvTieuDe, tvTrangThai;
+        LinearLayout allinner_baihocgannhat;
 
         public BaiHocViewHolder(@NonNull View itemView) {
             super(itemView);
             imgBaiHoc = itemView.findViewById(R.id.img_baihoc);
             tvTieuDe = itemView.findViewById(R.id.titlegannhat);
             tvTrangThai = itemView.findViewById(R.id.tinhtrangbaigannhat);
+            allinner_baihocgannhat = itemView.findViewById(R.id.allinner_baihocgannhat);
         }
     }
 } 
