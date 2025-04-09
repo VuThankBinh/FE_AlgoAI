@@ -18,12 +18,15 @@
         android:theme="@style/Theme.NCKH"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
-<!--        <activity-->
-<!--            android:name=".code"-->
-<!--            android:exported="false" />-->
-         <activity
-         android:name=".quiz"
-         android:exported="false" />
+        <activity
+            android:name=".baitai_lythuyet"
+            android:exported="false" />
+        <!-- <activity -->
+        <!-- android:name=".code" -->
+        <!-- android:exported="false" /> -->
+        <activity
+            android:name=".quiz"
+            android:exported="false" />
         <activity
             android:name=".thongtintaikhoan"
             android:exported="false" />
