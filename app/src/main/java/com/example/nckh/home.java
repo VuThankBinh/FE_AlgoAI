@@ -3,6 +3,7 @@ package com.example.nckh;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -124,8 +125,14 @@ public class home extends AppCompatActivity {
                 if (itemId == R.id.navigation_home) {
                     return true;
                 } else if (itemId == R.id.navigation_practice) {
+                    Intent intent = new Intent(home.this, lythuyet.class);
+                    startActivity(intent);
+//                    finish();
                     return true;
                 } else if (itemId == R.id.navigation_code) {
+                    Intent intent = new Intent(home.this, thuchanhlist.class);
+                    startActivity(intent);
+//                    finish();
                     return true;
                 } else if (itemId == R.id.navigation_profile) {
                     return true;

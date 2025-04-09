@@ -6,5 +6,96 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".thuchanhlist">
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Thực hành"
+            android:layout_marginTop="20dp"
+            android:textStyle="bold"
+            android:textSize="25dp"
+            android:textAlignment="center"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Chọn môn học"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"/>
+
+            <Spinner
+                android:id="@+id/spinnerSubjects"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:paddingVertical="5dp"
+                android:background="@drawable/bg_card_shadow"/>
+            <TextView
+                android:id="@+id/baihocdahoanthanh"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bài học đã hoàn thành"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginTop="8dp"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewLessonsCompleted"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:nestedScrollingEnabled="true"
+                android:orientation="horizontal"
+                android:overScrollMode="never"
+                android:clipToPadding="false"/>
+            <TextView
+                android:id="@+id/baihocdanghoc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bài học đang học"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginTop="8dp"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewLessonsLearning"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:nestedScrollingEnabled="true"
+                android:orientation="horizontal"
+                android:overScrollMode="never"
+                android:clipToPadding="false"/>
+            <TextView
+                android:id="@+id/baihocchuahoc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bài học chưa học"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginTop="8dp"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewLessons"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:nestedScrollingEnabled="false"
+                android:orientation="vertical"
+                android:overScrollMode="never"
+                android:clipToPadding="false"/>
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:menu="@menu/bottom_nav_menu"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
