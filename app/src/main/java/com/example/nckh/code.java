@@ -1,7 +1,9 @@
 package com.example.nckh;
 
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,11 +19,10 @@ public class code extends AppCompatActivity implements SocketManager.SocketListe
     private TextView tvKetQua, tvDeBai;
     private Spinner spinnerLanguage;
     private Button btnRun, btnSubmit;
-    private ImageButton btnToggleDeBai, btnToggleInput;
+    private ImageButton btnToggleDeBai;
     private SocketManager socketManager;
     private boolean isDeBaiVisible = false;
-    private boolean isInputVisible = false;
-    private boolean isWaitingForInput = false;
+    private boolean isExecuting = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +38,6 @@ public class code extends AppCompatActivity implements SocketManager.SocketListe
         btnRun = findViewById(R.id.btnRun);
         btnSubmit = findViewById(R.id.btnSubmit);
         btnToggleDeBai = findViewById(R.id.btnToggleDeBai);
-        btnToggleInput = findViewById(R.id.btnToggleInput);
 
         // Thiết lập Spinner ngôn ngữ
         String[] languages = {"Python", "Java", "SQL", "C#", "JavaScript"};
@@ -54,22 +54,21 @@ public class code extends AppCompatActivity implements SocketManager.SocketListe
                 R.drawable.ic_expand_less : R.drawable.ic_expand_more);
         });
 
-        // Xử lý sự kiện toggle input
-        btnToggleInput.setOnClickListener(v -> {
-            isInputVisible = !isInputVisible;
-            etInput.setVisibility(isInputVisible ? View.VISIBLE : View.GONE);
-            btnToggleInput.setImageResource(isInputVisible ? 
-                R.drawable.ic_expand_less : R.drawable.ic_expand_more);
-        });
+        // Vô hiệu hóa input ban đầu
+        etInput.setEnabled(false);
 
-        // Xử lý sự kiện khi nhập input
+        // Xử lý sự kiện khi nhấn Enter trên input
         etInput.setOnEditorActionListener((v, actionId, event) -> {
-            if (isWaitingForInput) {
-                String input = etInput.getText().toString();
+            if ((actionId == EditorInfo.IME_ACTION_DONE || 
+                (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) 
+                && isExecuting && etInput.isEnabled()) {
+                
+                String input = etInput.getText().toString().trim();
                 if (!input.isEmpty()) {
                     socketManager.sendInput(input);
-                    etInput.setText(""); // Xóa input sau khi gửi
-                    isWaitingForInput = false;
+                    tvKetQua.append(input + "\n");
+                    etInput.setText("");
+                    etInput.setEnabled(false);
                 }
                 return true;
             }
@@ -83,9 +82,8 @@ public class code extends AppCompatActivity implements SocketManager.SocketListe
         // Xử lý sự kiện nút Run
         btnRun.setOnClickListener(v -> {
             String code = etCode.getText().toString();
-            String language = spinnerLanguage.getSelectedItem().toString();
-            String input = etInput.getText().toString();
-
+            String language = spinnerLanguage.getSelectedItem().toString().toLowerCase();
+            
             if (code.isEmpty()) {
                 Toast.makeText(this, "Vui lòng nhập code", Toast.LENGTH_SHORT).show();
                 return;
@@ -93,16 +91,11 @@ public class code extends AppCompatActivity implements SocketManager.SocketListe
 
             // Xóa kết quả cũ
             tvKetQua.setText("");
+            isExecuting = true;
+            etInput.setEnabled(false);
             
-            // Hiển thị input nếu chưa hiển thị
-            if (!isInputVisible) {
-                isInputVisible = true;
-                etInput.setVisibility(View.VISIBLE);
-                btnToggleInput.setImageResource(R.drawable.ic_expand_less);
-            }
-
-            // Gửi code và input lên server
-            socketManager.executeCode(code, language, input);
+            // Gửi code lên server
+            socketManager.executeCode(code, language, "");
         });
 
         // Xử lý sự kiện nút Submit
@@ -129,14 +122,8 @@ public class code extends AppCompatActivity implements SocketManager.SocketListe
         runOnUiThread(() -> {
             // Kiểm tra nếu output chứa prompt nhập input
             if (output.contains("input(") || output.contains("Nhập")) {
-                isWaitingForInput = true;
-                // Hiển thị input nếu chưa hiển thị
-                if (!isInputVisible) {
-                    isInputVisible = true;
-                    etInput.setVisibility(View.VISIBLE);
-                    btnToggleInput.setImageResource(R.drawable.ic_expand_less);
-                }
-                // Focus vào input
+                isExecuting = true;
+                etInput.setEnabled(true);
                 etInput.requestFocus();
             }
             
@@ -156,6 +143,8 @@ public class code extends AppCompatActivity implements SocketManager.SocketListe
     @Override
     public void onError(String error) {
         runOnUiThread(() -> {
+            isExecuting = false;
+            etInput.setEnabled(false);
             Toast.makeText(this, "Lỗi: " + error, Toast.LENGTH_SHORT).show();
             tvKetQua.append("\nLỗi: " + error);
         });
