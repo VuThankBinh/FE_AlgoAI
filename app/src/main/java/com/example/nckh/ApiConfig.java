@@ -25,12 +25,20 @@ public class ApiConfig {
     public static final String POST_Doi_Pass_ENDPOINT = "/api/user/doi-mat-khau";
 
     public static final String POST_UPDATE_USER_ENDPOINT = "/api/user/cap-nhat-thong-tin";
-
-    public static final String POST_UPLOAD_FILE_ENDPOINT = "/api/upload/file";
+    public static final String POST_UPLOAD_FILE_ENDPOINT = "/api/upload";
 
     public static final String GET_CAU_HOI_ENDPOINT = "/api/bai-tap-quiz/theo-muc-do";
 
     public static final String POST_CHAT_ENDPOINT = "/api/chat/send?message=";
+
+    public static final String NOP_BAI_QUIZ_ENDPOINT = "/api/nop-bai/quiz";
+
+    public static final String CAP_NHAT_TIEN_DO_ENDPOINT = "/api/tien-do/cap-nhat";
+
+    public static final String Check_TienDo_quiz_ENDPOINT = "/api/nop-bai/kiem-tra-da-lam-quiz";
+
+    public  static final  String get_quiz_completed_ENDPOINT = "/api/nop-bai/bai-tap-quiz-theo-muc-do-co-de-bai";
+    public static final String Check_TienDo_code_ENDPOINT = "/api/nop-bai/kiem-tra-da-lam-code";
 
     public static  String getSocketUrl (){return BASE_URL +":5000";  }
     // Phương thức để lấy URL đầy đủ

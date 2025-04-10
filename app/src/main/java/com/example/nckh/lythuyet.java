@@ -256,4 +256,12 @@ public class lythuyet extends AppCompatActivity {
             }
         });
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Cập nhật lại dữ liệu mỗi khi quay về từ layout khác
+        fetchBaiHoc("da_hoc");
+        fetchBaiHoc("dang_hoc");
+        fetchBaiHoc("chua_hoc");
+    }
 }

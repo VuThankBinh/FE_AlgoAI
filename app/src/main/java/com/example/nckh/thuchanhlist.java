@@ -20,7 +20,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.nckh.adapter.ThucHanhlistAdapter;
-import com.example.nckh.adapter.ThucHanhlistAdapter;
 import com.example.nckh.model.BaiHoc;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -54,6 +53,7 @@ public class thuchanhlist extends AppCompatActivity {
     private OkHttpClient client = new OkHttpClient();
     private SharedPreferences sharedPreferences;
     private Integer id_bai = 0;
+    Integer[] subjectsIds = {12521068, 12521069, 12521070};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +73,115 @@ public class thuchanhlist extends AppCompatActivity {
         adapterLearning = new ThucHanhlistAdapter(listLearning);
         adapterNotStarted = new ThucHanhlistAdapter(listNotStarted);
 
+        // Thêm xử lý sự kiện click cho adapter
+        adapterCompleted.setOnItemClickListener(new ThucHanhlistAdapter.OnItemClickListener() {
+            @Override
+            public void onQuizClick(BaiHoc baiHoc) {
+                Intent intent = new Intent(thuchanhlist.this, quiz.class);
+                try {
+                    int baiHocId = Integer.parseInt(baiHoc.getId());
+                    int khoaHocId = subjectsIds[spinnerSubjects.getSelectedItemPosition()];
+                    intent.putExtra("baiHocId", baiHocId);
+                    intent.putExtra("idKhoaHoc", khoaHocId);
+                    intent.putExtra("isQuiz",baiHoc.isDaLamQuiz());
+                    intent.putExtra("nameBai", baiHoc.getTieuDe());
+                    System.out.println("Quiz - BaiHocId: " + baiHocId + ", KhoaHocId: " + khoaHocId + ", Name: " + baiHoc.getTieuDe());
+                    startActivity(intent);
+                } catch (NumberFormatException e) {
+                    System.out.println("Error parsing baiHocId: " + e.getMessage());
+                }
+            }
+
+            @Override
+            public void onCodeClick(BaiHoc baiHoc) {
+                Intent intent = new Intent(thuchanhlist.this, code.class);
+                try {
+                    int baiHocId = Integer.parseInt(baiHoc.getId());
+                    int khoaHocId = subjectsIds[spinnerSubjects.getSelectedItemPosition()];
+                    intent.putExtra("baiHocId", baiHocId);
+                    intent.putExtra("idKhoaHoc", khoaHocId);
+                    intent.putExtra("nameBai", baiHoc.getTieuDe());
+                    intent.putExtra("isQuiz",baiHoc.isDaLamCode());
+                    System.out.println("Code - BaiHocId: " + baiHocId + ", KhoaHocId: " + khoaHocId + ", Name: " + baiHoc.getTieuDe());
+                    startActivity(intent);
+                } catch (NumberFormatException e) {
+                    System.out.println("Error parsing baiHocId: " + e.getMessage());
+                }
+            }
+        });
+
+        adapterLearning.setOnItemClickListener(new ThucHanhlistAdapter.OnItemClickListener() {
+            @Override
+            public void onQuizClick(BaiHoc baiHoc) {
+                Intent intent = new Intent(thuchanhlist.this, quiz.class);
+                try {
+                    int baiHocId = Integer.parseInt(baiHoc.getId());
+                    int khoaHocId = subjectsIds[spinnerSubjects.getSelectedItemPosition()];
+                    intent.putExtra("baiHocId", baiHocId);
+                    intent.putExtra("idKhoaHoc", khoaHocId);
+                    intent.putExtra("nameBai", baiHoc.getTieuDe());
+                    intent.putExtra("isQuiz",baiHoc.isDaLamQuiz());
+                    System.out.println("Quiz - BaiHocId: " + baiHocId + ", KhoaHocId: " + khoaHocId + ", Name: " + baiHoc.getTieuDe());
+                    startActivity(intent);
+                } catch (NumberFormatException e) {
+                    System.out.println("Error parsing baiHocId: " + e.getMessage());
+                }
+            }
+
+            @Override
+            public void onCodeClick(BaiHoc baiHoc) {
+                Intent intent = new Intent(thuchanhlist.this, code.class);
+                try {
+                    int baiHocId = Integer.parseInt(baiHoc.getId());
+                    int khoaHocId = subjectsIds[spinnerSubjects.getSelectedItemPosition()];
+                    intent.putExtra("baiHocId", baiHocId);
+                    intent.putExtra("idKhoaHoc", khoaHocId);
+                    intent.putExtra("nameBai", baiHoc.getTieuDe());
+                    intent.putExtra("isQuiz",baiHoc.isDaLamCode());
+                    System.out.println("Code - BaiHocId: " + baiHocId + ", KhoaHocId: " + khoaHocId + ", Name: " + baiHoc.getTieuDe());
+                    startActivity(intent);
+                } catch (NumberFormatException e) {
+                    System.out.println("Error parsing baiHocId: " + e.getMessage());
+                }
+            }
+        });
+
+        adapterNotStarted.setOnItemClickListener(new ThucHanhlistAdapter.OnItemClickListener() {
+            @Override
+            public void onQuizClick(BaiHoc baiHoc) {
+                Intent intent = new Intent(thuchanhlist.this, quiz.class);
+                try {
+                    int baiHocId = Integer.parseInt(baiHoc.getId());
+                    int khoaHocId = subjectsIds[spinnerSubjects.getSelectedItemPosition()];
+                    intent.putExtra("baiHocId", baiHocId);
+                    intent.putExtra("isQuiz",baiHoc.isDaLamQuiz());
+                    intent.putExtra("idKhoaHoc", khoaHocId);
+                    intent.putExtra("nameBai", baiHoc.getTieuDe());
+                    System.out.println("Quiz - BaiHocId: " + baiHocId + ", KhoaHocId: " + khoaHocId + ", Name: " + baiHoc.getTieuDe());
+                    startActivity(intent);
+                } catch (NumberFormatException e) {
+                    System.out.println("Error parsing baiHocId: " + e.getMessage());
+                }
+            }
+
+            @Override
+            public void onCodeClick(BaiHoc baiHoc) {
+                Intent intent = new Intent(thuchanhlist.this, code.class);
+                try {
+                    int baiHocId = Integer.parseInt(baiHoc.getId());
+                    int khoaHocId = subjectsIds[spinnerSubjects.getSelectedItemPosition()];
+                    intent.putExtra("baiHocId", baiHocId);
+                    intent.putExtra("idKhoaHoc", khoaHocId);
+                    intent.putExtra("nameBai", baiHoc.getTieuDe());
+                    intent.putExtra("isQuiz",baiHoc.isDaLamCode());
+                    System.out.println("Code - BaiHocId: " + baiHocId + ", KhoaHocId: " + khoaHocId + ", Name: " + baiHoc.getTieuDe());
+                    startActivity(intent);
+                } catch (NumberFormatException e) {
+                    System.out.println("Error parsing baiHocId: " + e.getMessage());
+                }
+            }
+        });
+
         // Cấu hình RecyclerView cho bài học đã hoàn thành và đang học (ngang)
         setupRecyclerViewHorizontal(recyclerViewLessonsCompleted, adapterCompleted);
         setupRecyclerViewHorizontal(recyclerViewLessonsLearning, adapterLearning);
@@ -82,7 +191,7 @@ public class thuchanhlist extends AppCompatActivity {
 
         // Xử lý Spinner môn học
         String[] subjects = {"Thuật toán", "SQL server", "Lập trình OOP"};
-        Integer[] subjectsIds = {12521068, 12521069, 12521070};
+
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, subjects);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -173,7 +282,7 @@ public class thuchanhlist extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     try {
                         String responseData = response.body().string();
-                        System.out.println("Response data: " + responseData);
+//                        System.out.println("Response data: " + responseData);
                         JSONArray jsonArray = new JSONArray(responseData);
                         List<BaiHoc> list = new ArrayList<>();
 
@@ -196,6 +305,7 @@ public class thuchanhlist extends AppCompatActivity {
                             );
 
                             list.add(baiHoc);
+                            System.out.println("Bai hoc: " + baiHoc.getId());
                         }
 
                         runOnUiThread(() -> {
@@ -229,5 +339,13 @@ public class thuchanhlist extends AppCompatActivity {
                 }
             }
         });
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Cập nhật lại dữ liệu mỗi khi quay về từ layout khác
+        fetchBaiHoc("da_hoc");
+        fetchBaiHoc("dang_hoc");
+        fetchBaiHoc("chua_hoc");
     }
 }

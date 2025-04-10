@@ -430,4 +430,12 @@ public class home extends AppCompatActivity {
             }
         });
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Cập nhật lại dữ liệu mỗi khi quay về từ layout khác
+        fetchBaiHocGanNhat();
+        fetchUserInfo();
+        fetchDanhSachBaiHoc();
+    }
 }

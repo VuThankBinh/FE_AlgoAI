@@ -222,7 +222,7 @@ public class thongtintaikhoan extends AppCompatActivity {
 
             // Gửi request bằng OkHttp
             Request request = new Request.Builder()
-                    .url("http://192.168.1.10:8080/api/upload")
+                    .url(ApiConfig.getFullUrl(ApiConfig.POST_UPLOAD_FILE_ENDPOINT))
                     .addHeader("accept", "*/*")
                     .post(requestBody)
                     .build();
@@ -428,4 +428,5 @@ public class thongtintaikhoan extends AppCompatActivity {
             }
         });
     }
+
 } 

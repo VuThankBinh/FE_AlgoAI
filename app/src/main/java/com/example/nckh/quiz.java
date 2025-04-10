@@ -1,5 +1,7 @@
 package com.example.nckh;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -26,8 +28,10 @@ import java.util.Random;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class quiz extends AppCompatActivity {
@@ -38,6 +42,15 @@ public class quiz extends AppCompatActivity {
     private List<View> cauHoiViews;
     private String mucDoHienTai = "co_ban";
     private OkHttpClient client;
+    private Integer idBaiHoc=0;
+    private Integer idKhoaHoc=0;
+    private String tenBai="";
+    private TextView tvKetQua;
+    private boolean daNopBai = false;
+    private int diem = 0;
+    private boolean daLamQuiz = false;
+    private String dapAnCu = "";
+    private int diemCu = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +61,13 @@ public class quiz extends AppCompatActivity {
         spinnerDeThi = findViewById(R.id.spinnerDeThi);
         questionContainer = findViewById(R.id.questionContainer);
         btnXemKetQua = findViewById(R.id.btnXemKetQua);
+        tvKetQua = findViewById(R.id.tvKetQua);
         client = new OkHttpClient();
+
+        // Kiểm tra xem đã làm quiz này chưa
+        SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
+        String userId = sharedPreferences.getString("id", "");
+        kiemTraDaLamQuiz(userId);
 
         // Khởi tạo danh sách câu hỏi
         danhSachCauHoi = new ArrayList<>();
@@ -59,7 +78,17 @@ public class quiz extends AppCompatActivity {
                 R.array.muc_do, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerDeThi.setAdapter(adapter);
+        Intent intent = getIntent();
+        idBaiHoc = intent.getIntExtra("baiHocId", 0);
+        idKhoaHoc = intent.getIntExtra("idKhoaHoc", 0);
+        tenBai=intent.getStringExtra("nameBai");
+        System.out.println(tenBai);
+        System.out.println(idBaiHoc);
+        System.out.println(idKhoaHoc);
+        TextView tenBaiHoc = findViewById(R.id.tenBaiHoc);
+        tenBaiHoc.setText(tenBai);
 
+        loadCauHoi();
         // Xử lý sự kiện chọn mức độ
         spinnerDeThi.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
             @Override
@@ -75,7 +104,8 @@ public class quiz extends AppCompatActivity {
                         mucDoHienTai = "nang_cao";
                         break;
                 }
-                loadCauHoi();
+                // Kiểm tra kết quả cũ trước khi load câu hỏi mới
+                kiemTraKetQuaCu();
             }
 
             @Override
@@ -83,13 +113,165 @@ public class quiz extends AppCompatActivity {
             }
         });
 
-        // Xử lý sự kiện nút xem kết quả
-        btnXemKetQua.setOnClickListener(v -> tinhDiem());
+        // Xử lý sự kiện nút xem kết quả/làm lại
+        btnXemKetQua.setOnClickListener(v -> {
+            if (!daNopBai) {
+                tinhDiem();
+            } else {
+                // Làm lại bài
+                resetQuiz();
+            }
+        });
+    }
+
+    private void kiemTraDaLamQuiz(String userId) {
+        String url = ApiConfig.getFullUrl(ApiConfig.Check_TienDo_quiz_ENDPOINT) + "?idNguoiDung=" + userId + "&idBaiHoc=" + idBaiHoc;
+        
+        Request request = new Request.Builder()
+                .url(url)
+                .get()
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                runOnUiThread(() -> {
+                    System.out.println("err kiem tra da lam quiz: " + e.toString());
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    try {
+                        String responseData = response.body().string();
+                        JSONObject jsonObject = new JSONObject(responseData);
+                        daLamQuiz = jsonObject.getBoolean("data");
+                        System.out.println("da lam quiz: " + daLamQuiz);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
+
+    private void kiemTraKetQuaCu() {
+        // Ẩn điểm cũ trước khi kiểm tra
+        tvKetQua.setVisibility(View.GONE);
+        
+        SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
+        String userId = sharedPreferences.getString("id", "");
+
+        String url = ApiConfig.getFullUrl(ApiConfig.get_quiz_completed_ENDPOINT)
+                + "?idNguoiDung=" + userId 
+                + "&idBaiHoc=" + idBaiHoc 
+                + "&mucDo=" + mucDoHienTai;
+
+        Request request = new Request.Builder()
+                .url(url)
+                .get()
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                runOnUiThread(() -> {
+                    System.out.println("err kiem tra ket qua cu: " + e.toString());
+                    // Nếu không lấy được kết quả cũ thì load câu hỏi mới
+                    loadCauHoi();
+                    // Reset trạng thái nút
+                    btnXemKetQua.setText("Xem kết quả");
+                    btnXemKetQua.setVisibility(View.VISIBLE);
+                    daNopBai = false;
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    try {
+                        String responseData = response.body().string();
+                        JSONArray jsonArray = new JSONArray(responseData);
+                        
+                        if (jsonArray.length() > 0) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(0);
+                            diemCu = jsonObject.getInt("diem");
+                            dapAnCu = jsonObject.getString("dapAnNguoiDung");
+                            
+                            runOnUiThread(() -> {
+                                hienThiKetQuaCu();
+                            });
+                        } else {
+                            // Nếu không có kết quả cũ thì load câu hỏi mới
+                            runOnUiThread(() -> {
+                                loadCauHoi();
+                                // Reset trạng thái nút
+                                btnXemKetQua.setText("Xem kết quả");
+                                btnXemKetQua.setVisibility(View.VISIBLE);
+                                daNopBai = false;
+                            });
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        runOnUiThread(() -> {
+                            loadCauHoi();
+                            // Reset trạng thái nút
+                            btnXemKetQua.setText("Xem kết quả");
+                            btnXemKetQua.setVisibility(View.VISIBLE);
+                            daNopBai = false;
+                        });
+                    }
+                } else {
+                    runOnUiThread(() -> {
+                        loadCauHoi();
+                        // Reset trạng thái nút
+                        btnXemKetQua.setText("Xem kết quả");
+                        btnXemKetQua.setVisibility(View.VISIBLE);
+                        daNopBai = false;
+                    });
+                }
+            }
+        });
+    }
+
+    private void hienThiKetQuaCu() {
+        // Hiển thị điểm cũ
+        String ketQua = "Điểm cũ: " + diemCu + "/10";
+        tvKetQua.setText(ketQua);
+        tvKetQua.setVisibility(View.VISIBLE);
+
+        // Vô hiệu hóa các RadioGroup
+        for (View view : cauHoiViews) {
+            RadioGroup radioGroup = view.findViewById(R.id.radioGroup);
+            radioGroup.setEnabled(false);
+            // Vô hiệu hóa từng RadioButton
+            for (int i = 0; i < radioGroup.getChildCount(); i++) {
+                radioGroup.getChildAt(i).setEnabled(false);
+            }
+        }
+
+        // Hiển thị đáp án cũ
+        String[] dapAns = dapAnCu.split("-");
+        for (int i = 0; i < cauHoiViews.size() && i < dapAns.length; i++) {
+            View view = cauHoiViews.get(i);
+            RadioGroup radioGroup = view.findViewById(R.id.radioGroup);
+            int selectedIndex = dapAns[i].charAt(0) - 'A';
+            if (selectedIndex >= 0 && selectedIndex < radioGroup.getChildCount()) {
+                RadioButton radioButton = (RadioButton) radioGroup.getChildAt(selectedIndex);
+                radioButton.setChecked(true);
+            }
+        }
+
+        // Thay đổi nút
+        btnXemKetQua.setText("Làm lại");
+        btnXemKetQua.setVisibility(View.VISIBLE);
+        daNopBai = true;
     }
 
     private void loadCauHoi() {
         Request request = new Request.Builder()
-                .url(ApiConfig.getFullUrl(ApiConfig.GET_CAU_HOI_ENDPOINT + "?mucDo=" + mucDoHienTai +"&idBaiHoc=2"))
+                .url(ApiConfig.getFullUrl(ApiConfig.GET_CAU_HOI_ENDPOINT + "?mucDo=" + mucDoHienTai +"&idBaiHoc=" +idBaiHoc))
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
@@ -166,8 +348,10 @@ public class quiz extends AppCompatActivity {
     }
 
     private void tinhDiem() {
-        int diem = 0;
+        diem = 0;
         int tongCauHoi = cauHoiViews.size();
+        StringBuilder dapAn = new StringBuilder();
+        boolean daChonHet = true;
 
         for (int i = 0; i < tongCauHoi; i++) {
             View view = cauHoiViews.get(i);
@@ -179,15 +363,170 @@ public class quiz extends AppCompatActivity {
                 int selectedIndex = radioGroup.indexOfChild(radioButton);
                 String selectedAnswer = String.valueOf((char) ('A' + selectedIndex));
                 
-                // Kiểm tra đáp án
+                if (i > 0) {
+                    dapAn.append("-");
+                }
+                dapAn.append(selectedAnswer);
+                
                 if (selectedAnswer.equals(danhSachCauHoi.get(i).getDapAnDung())) {
                     diem++;
                 }
+            } else {
+                if (i > 0) {
+                    dapAn.append("-");
+                }
+                dapAn.append("-");
+                daChonHet = false;
+            }
+        }
+
+        if (!daChonHet) {
+            Toast.makeText(this, "Vui lòng chọn đáp án cho tất cả các câu hỏi!", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        // Vô hiệu hóa tất cả RadioGroup và RadioButton ngay sau khi tính điểm
+        for (View view : cauHoiViews) {
+            RadioGroup radioGroup = view.findViewById(R.id.radioGroup);
+            radioGroup.setEnabled(false);
+            // Vô hiệu hóa từng RadioButton
+            for (int i = 0; i < radioGroup.getChildCount(); i++) {
+                radioGroup.getChildAt(i).setEnabled(false);
             }
         }
 
         // Hiển thị kết quả
         String ketQua = "Bạn đạt " + diem + "/" + tongCauHoi + " điểm";
-        Toast.makeText(this, ketQua, Toast.LENGTH_LONG).show();
+        tvKetQua.setText(ketQua);
+        tvKetQua.setVisibility(View.VISIBLE);
+
+        // Thay đổi nút
+        if (diem < 10) {
+            btnXemKetQua.setText("Làm lại");
+        } else {
+            btnXemKetQua.setVisibility(View.GONE);
+        }
+
+        daNopBai = true;
+
+        // Gọi API nộp bài
+        nopBai(diem, dapAn.toString());
+    }
+
+    private void resetQuiz() {
+        // Reset trạng thái
+        daNopBai = false;
+        diem = 0;
+        tvKetQua.setVisibility(View.GONE); // Ẩn điểm cũ
+        btnXemKetQua.setText("Xem kết quả");
+        btnXemKetQua.setVisibility(View.VISIBLE);
+
+        // Bật lại các RadioGroup
+        for (View view : cauHoiViews) {
+            RadioGroup radioGroup = view.findViewById(R.id.radioGroup);
+            radioGroup.clearCheck();
+            radioGroup.setEnabled(true);
+            // Bật lại từng RadioButton
+            for (int i = 0; i < radioGroup.getChildCount(); i++) {
+                radioGroup.getChildAt(i).setEnabled(true);
+            }
+        }
+
+        // Load lại câu hỏi
+        loadCauHoi();
+    }
+
+    private void nopBai(int diem, String dapAn) {
+        SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
+        String userId = sharedPreferences.getString("id", "");
+
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("idNguoiDung", Integer.parseInt(userId));
+            jsonObject.put("idBaiHoc", idBaiHoc);
+            jsonObject.put("dapAn", dapAn);
+            jsonObject.put("mucDo", mucDoHienTai);
+            jsonObject.put("diem", diem);
+            jsonObject.put("ngayNop", new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(new java.util.Date()));
+
+            RequestBody body = RequestBody.create(jsonObject.toString(), MediaType.parse("application/json"));
+            Request request = new Request.Builder()
+                    .url(ApiConfig.getFullUrl(ApiConfig.NOP_BAI_QUIZ_ENDPOINT))
+                    .post(body)
+                    .build();
+
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    runOnUiThread(() -> {
+                        System.out.println("err nop: " + e.toString());
+                    });
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    runOnUiThread(() -> {
+                        if (response.isSuccessful()) {
+                            Toast.makeText(quiz.this, "Nộp bài thành công!", Toast.LENGTH_SHORT).show();
+                            // Chỉ cập nhật tiến độ nếu là lần đầu làm quiz
+                            kiemTraDaLamQuiz(userId);
+                            if (!daLamQuiz) {
+                                capNhatTienDo();
+                            } else {
+                                finish();
+                            }
+                        } else {
+                            System.out.println("err nop: " + response.toString());
+                        }
+                    });
+                }
+            });
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Lỗi tạo dữ liệu nộp bài", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void capNhatTienDo() {
+        SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
+        String userId = sharedPreferences.getString("id", "");
+        RequestBody body = RequestBody.create(new byte[0], null);;
+
+// Hoặc nếu server yêu cầu MediaType cụ thể (ví dụ: JSON)
+// MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+// RequestBody body = RequestBody.create("{}", JSON);
+
+// Tạo URL có query params
+        String url = ApiConfig.getFullUrl(ApiConfig.CAP_NHAT_TIEN_DO_ENDPOINT)
+                + "?idNguoiDung=" + userId
+                + "&idBaiHoc=" + idBaiHoc;
+
+// Tạo request
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .build();
+
+// Gửi request
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                runOnUiThread(() -> {
+                    System.out.println("err update tiendo: " + e.toString());
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                runOnUiThread(() -> {
+                    if (response.isSuccessful()) {
+                        Toast.makeText(quiz.this, "Cập nhật tiến độ thành công!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        System.out.println("err update tiendo2: " + response.toString());
+                    }
+                });
+            }
+        });
+
     }
 }

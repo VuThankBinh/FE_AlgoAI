@@ -28,6 +28,7 @@
             android:layout_height="wrap_content"
             android:text="Trắc nghiệm về thuật toán Bubble Sort"
             android:textSize="16sp"
+            android:id="@+id/tenBaiHoc"
             android:textStyle="bold"
             android:textColor="#000000"/>
     </LinearLayout>
@@ -100,7 +101,20 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- Nút xem kết quả -->
+    <!-- Kết quả -->
+    <TextView
+        android:id="@+id/tvKetQua"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#1976D2"
+        android:gravity="center"
+        android:visibility="gone"
+        android:layout_marginBottom="8dp"/>
+
+    <!-- Nút xem kết quả/Làm lại -->
     <Button
         android:id="@+id/btnXemKetQua"
         android:layout_width="match_parent"
