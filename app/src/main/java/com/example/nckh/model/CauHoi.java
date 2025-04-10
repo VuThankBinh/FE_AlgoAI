@@ -1,4 +1,4 @@
-package com.example.nckh;
+package com.example.nckh.model;
 
 public class CauHoi {
     private int id;

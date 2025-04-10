@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <!-- Tin nhắn của người dùng -->
+    <LinearLayout
+        android:id="@+id/layoutUserMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tvUserMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="280dp"
+            android:padding="12dp"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/user_message_background"
+            android:textSize="16sp"
+            android:textIsSelectable="true"/>
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/user"
+            android:contentDescription="User avatar"/>
+    </LinearLayout>
+
+    <!-- Tin nhắn của AI -->
+    <LinearLayout
+        android:id="@+id/layoutAIMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="start"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/ai1"
+            android:contentDescription="AI avatar"/>
+
+        <TextView
+            android:id="@+id/tvAIMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="280dp"
+            android:padding="12dp"
+            android:textColor="#000000"
+            android:background="@drawable/ai_message_background"
+            android:textSize="16sp"
+            android:textIsSelectable="true"/>
+    </LinearLayout>
+</LinearLayout> 

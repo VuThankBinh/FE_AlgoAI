@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:background="@color/colorPrimary">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Trợ lý AI"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/btnCloseChat"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/baseline_arrow_back_24"
+            android:tint="@color/white" />
+    </LinearLayout>
+
+    <!-- Suggested Questions -->
+    <LinearLayout
+        android:id="@+id/layoutSuggestedQuestions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="@color/white">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bạn có thể hỏi tôi:"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/btnQuestion1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Giải thích bài học này"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/btn_question_background" />
+
+        <Button
+            android:id="@+id/btnQuestion2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Cho ví dụ về bài học"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/btn_question_background" />
+
+        <Button
+            android:id="@+id/btnQuestion3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Làm thế nào để áp dụng bài học này?"
+            android:background="@drawable/btn_question_background" />
+    </LinearLayout>
+
+    <!-- Chat Messages -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvChatMessages"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="16dp" />
+
+    <!-- Input Area -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:background="@color/cardview_light_background">
+
+        <EditText
+            android:id="@+id/etMessage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Nhập tin nhắn..."
+            android:background="@drawable/edit_text_background"
+            android:padding="12dp" />
+
+        <Button
+            android:id="@+id/btnSend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Gửi"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/btn_send_background" />
+    </LinearLayout>
+</LinearLayout> 

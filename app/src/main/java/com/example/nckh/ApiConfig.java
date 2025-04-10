@@ -30,7 +30,7 @@ public class ApiConfig {
 
     public static final String GET_CAU_HOI_ENDPOINT = "/api/bai-tap-quiz/theo-muc-do";
 
-
+    public static final String POST_CHAT_ENDPOINT = "/api/chat/send?message=";
 
     public static  String getSocketUrl (){return BASE_URL +":5000";  }
     // Phương thức để lấy URL đầy đủ

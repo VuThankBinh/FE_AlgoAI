@@ -10,9 +10,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.nckh.ApiConfig;
 import com.example.nckh.R;
 import com.example.nckh.model.BaiHoc;
+import com.example.nckh.taikhoan;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -20,6 +22,15 @@ import java.util.List;
 public class BaiHocAdapter extends RecyclerView.Adapter<BaiHocAdapter.BaiHocViewHolder> {
 
     private List<BaiHoc> baiHocList;
+    private OnItemClickListener listener;
+
+    public interface OnItemClickListener {
+        void onItemClick(BaiHoc baiHoc);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
+    }
 
     public BaiHocAdapter(List<BaiHoc> baiHocList) {
         this.baiHocList = baiHocList;
@@ -35,27 +46,13 @@ public class BaiHocAdapter extends RecyclerView.Adapter<BaiHocAdapter.BaiHocView
     @Override
     public void onBindViewHolder(@NonNull BaiHocViewHolder holder, int position) {
         BaiHoc baiHoc = baiHocList.get(position);
-        holder.tvTieuDe.setText(baiHoc.getTieuDe());
+        holder.bind(baiHoc);
         
-        String trangThai = "";
-        if (baiHoc.getTrangThai().equals("dang_hoc")) {
-            trangThai = "Đang học";
-        } else if (baiHoc.getTrangThai().equals("chua_hoc")) {
-            trangThai = "Chưa học";
-        } else if (baiHoc.getTrangThai().equals("da_hoc")) {
-            trangThai = "Đã học";
-        }
-        holder.tvTrangThai.setText("Trạng thái: " + trangThai);
-
-        if (baiHoc.getAnhBaiHoc() != null && !baiHoc.getAnhBaiHoc().isEmpty()) {
-            Picasso.get()
-                    .load(ApiConfig.get_imagge_ENDPOINT + baiHoc.getAnhBaiHoc())
-                    .placeholder(R.drawable.user)
-                    .error(R.drawable.user)
-                    .into(holder.imgBaiHoc);
-        } else {
-            holder.imgBaiHoc.setImageResource(R.drawable.user);
-        }
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onItemClick(baiHoc);
+            }
+        });
     }
 
     @Override
@@ -74,6 +71,31 @@ public class BaiHocAdapter extends RecyclerView.Adapter<BaiHocAdapter.BaiHocView
             tvTieuDe = itemView.findViewById(R.id.titlegannhat);
             tvTrangThai = itemView.findViewById(R.id.tinhtrangbaigannhat);
             allinner_baihocgannhat = itemView.findViewById(R.id.allinner_baihocgannhat);
+        }
+
+        public void bind(BaiHoc baiHoc) {
+            tvTieuDe.setText(baiHoc.getTieuDe());
+            
+            String trangThai = "";
+            if (baiHoc.getTrangThai().equals("dang_hoc")) {
+                trangThai = "Đang học";
+            } else if (baiHoc.getTrangThai().equals("chua_hoc")) {
+                trangThai = "Chưa học";
+            } else if (baiHoc.getTrangThai().equals("da_hoc")) {
+                trangThai = "Đã học";
+            }
+            tvTrangThai.setText("Trạng thái: " + trangThai);
+
+            if (baiHoc.getAnhBaiHoc() != null && !baiHoc.getAnhBaiHoc().isEmpty()) {
+
+                Glide.with(itemView.getContext())
+                        .load(ApiConfig.getFullUrl(ApiConfig.get_imagge_ENDPOINT + baiHoc.getAnhBaiHoc()))
+                        .placeholder(R.drawable.user)
+                        .error(R.drawable.user)
+                        .into(imgBaiHoc);
+            } else {
+                imgBaiHoc.setImageResource(R.drawable.user);
+            }
         }
     }
 } 

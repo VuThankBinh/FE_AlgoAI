@@ -56,8 +56,8 @@
                 <!-- Avatar -->
                 <ImageView
                     android:id="@+id/avt"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
                     android:src="@drawable/robot"
                     android:scaleType="centerCrop"
                     android:layout_gravity="center_vertical"

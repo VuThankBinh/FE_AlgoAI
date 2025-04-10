@@ -23,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.nckh.adapter.BaiHocAdapter;
 import com.example.nckh.model.BaiHoc;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -56,6 +57,7 @@ public class home extends AppCompatActivity {
     private BaiHocAdapter baiHocAdapter;
     private List<BaiHoc> baiHocList = new ArrayList<>();
     private Integer id_bai=0;
+    BaiHoc baiHocganNhat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +76,9 @@ public class home extends AppCompatActivity {
         recyclerViewLessons = findViewById(R.id.recyclerViewLessons);
         liner_code=findViewById(R.id.line_code);
         liner_lythuyet=findViewById(R.id.line_lythuyet);
+        btnhoctiep=findViewById(R.id.btnhoctiep);
+        // Xử lý sự kiện click cho các view
+
         liner_lythuyet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,7 +99,7 @@ public class home extends AppCompatActivity {
         recyclerViewLessons.setHasFixedSize(false);
         baiHocAdapter = new BaiHocAdapter(baiHocList);
         recyclerViewLessons.setAdapter(baiHocAdapter);
-
+        setupRecyclerViewVertical(recyclerViewLessons, baiHocAdapter);
         // Gọi API lấy thông tin người dùng
         fetchUserInfo();
 
@@ -123,12 +128,10 @@ public class home extends AppCompatActivity {
                 // Không cần xử lý
             }
         });
-
-        btnhoctiep=findViewById(R.id.btnhoctiep);
         btnhoctiep.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(home.this, "adu", Toast.LENGTH_SHORT).show();
+                openBaiTapLyThuyet(baiHocganNhat);
             }
         });
 
@@ -204,10 +207,11 @@ public class home extends AppCompatActivity {
                             getmail.setText(email);
 
                             if (avatar != null && !avatar.isEmpty()) {
-                                Picasso.get()
-                                        .load(ApiConfig.getFullUrl(ApiConfig.get_imagge_ENDPOINT+avatar))
-                                        .placeholder(R.drawable.user) // trong khi tải
-                                        .error(R.drawable.user)       // lỗi thì dùng ảnh mặc định
+                                Glide.with(home.this)
+                                        .load(ApiConfig.getFullUrl(ApiConfig.get_imagge_ENDPOINT + avatar))
+                                        .placeholder(R.drawable.user)
+                                        .error(R.drawable.user)
+                                        .circleCrop() // hoặc .circleCrop() nếu muốn avatar tròn
                                         .into(avt);
                             } else {
                                 avt.setImageResource(R.drawable.user);
@@ -226,7 +230,16 @@ public class home extends AppCompatActivity {
             }
         });
     }
-
+    private void openBaiTapLyThuyet(BaiHoc baiHoc) {
+        Intent intent = new Intent(this, baitai_lythuyet.class);
+        intent.putExtra("id_bai_hoc", baiHoc.getId());
+        intent.putExtra("tieu_de", baiHoc.getTieuDe());
+        intent.putExtra("noi_dung", baiHoc.getNoiDung());
+        intent.putExtra("link_youtube", baiHoc.getLinkYoutube());
+        intent.putExtra("link_mo_ta", baiHoc.getLinkMoTa());
+        intent.putExtra("anh_bai_hoc", baiHoc.getAnhBaiHoc());
+        startActivity(intent);
+    }
     private void fetchBaiHocGanNhat() {
         // Lấy id user từ SharedPreferences
         String userId = sharedPreferences.getString("id", "");
@@ -268,6 +281,7 @@ public class home extends AppCompatActivity {
                         String linkMoTa=jsonObject.getString("linkMoTa");
                         String trangThai=jsonObject.getString("trangThai");
                         String anhBaiHoc=jsonObject.getString("anhBaiHoc");
+                        baiHocganNhat=new BaiHoc(id_baihoc,title,noidung,linkYoutube,linkMoTa,trangThai,anhBaiHoc);
 
                         runOnUiThread(() -> {
                             TextView baihocgannhat= findViewById(R.id.baihocgannhat);
@@ -328,7 +342,19 @@ public class home extends AppCompatActivity {
             }
         });
     }
+    private void setupRecyclerViewVertical(RecyclerView recyclerView, BaiHocAdapter adapter) {
+        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        recyclerView.setNestedScrollingEnabled(false);
+        recyclerView.setAdapter(adapter);
 
+        // Thêm sự kiện click cho adapter
+        adapter.setOnItemClickListener(new BaiHocAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaiHoc baiHoc) {
+                openBaiTapLyThuyet(baiHoc);
+            }
+        });
+    }
     private void fetchDanhSachBaiHoc() {
         String userId = sharedPreferences.getString("id", "");
         if (userId.isEmpty()) {

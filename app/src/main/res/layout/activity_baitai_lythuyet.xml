@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".baitai_lythuyet">
-    <?xml version="1.0" encoding="utf-8"?>
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -19,14 +18,14 @@
             android:padding="16dp">
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="horizontal">
                 <ImageView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/Left"/>
+                    android:src="@drawable/left"/>
                 <TextView
-                    android:id="@+id/titleText"
+                    android:id="@+id/tvTieuDe"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
@@ -37,7 +36,7 @@
                     android:textSize="18sp"
                     android:textStyle="bold" />
             </LinearLayout>
-            <VideoView
+            <WebView
                 android:id="@+id/thumbnailImage"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
@@ -50,6 +49,7 @@
                 android:weightSum="2"
                 android:orientation="horizontal">
                 <Button
+                    android:visibility="gone"
                     android:id="@+id/btnPrevious"
                     android:layout_width="match_parent"
                     android:layout_weight="1"
@@ -61,6 +61,7 @@
                     android:text="Bài trước" />
                 <Button
                     android:id="@+id/btnNext"
+                    android:visibility="gone"
                     android:layout_weight="1"
                     android:backgroundTint="#C4E2F9"
                     android:textColor="#0738CD"
@@ -78,14 +79,18 @@
                 <ImageView
                     android:layout_width="25dp"
                     android:layout_height="25dp"
-                    android:src="@drawable/SortDown"/>
-                <TextView
+                    android:visibility="gone"
+                    android:src="@drawable/sortdown"/>
+                <Button
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Minh họa thuật toán"
+                    android:text="Minh họa"
+                    android:id="@+id/btnMinhHoa"
+                    android:textAlignment="center"
                     android:textColor="#000000"
                     android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:backgroundTint="#4CAF50"/>
             </LinearLayout>
 
             <!-- Nhập thông tin -->
@@ -94,6 +99,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:weightSum="2"
+                android:visibility="gone"
                 android:orientation="horizontal">
                 <TextView
                     android:layout_weight="1"
@@ -116,6 +122,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:weightSum="2"
+                android:visibility="gone"
                 android:orientation="horizontal">
                 <TextView
                     android:layout_weight="1"
@@ -138,6 +145,7 @@
                 android:layout_marginTop="16dp"
                 android:gravity="center"
                 android:weightSum="2"
+                android:visibility="gone"
                 android:orientation="horizontal">
                 <Button
                     android:layout_weight="1"
@@ -160,22 +168,40 @@
                     android:textColor="#FFFFFF" />
             </LinearLayout>
 
-            <ImageView
-                android:id="@+id/chartView"
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:layout_marginTop="24dp"
                 android:background="#DDFFDD"
-                android:scaleType="fitCenter" />
-
-            <ImageView
-                android:id="@+id/aiBot"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_gravity="end"
-                android:layout_marginTop="16dp"
-                android:contentDescription="AI Bot"
-                android:src="@drawable/AI1" />
+                android:scaleType="fitCenter"
+                android:id="@+id/tvNoiDung"
+                android:scrollbars="vertical">
+            </TextView>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="4"
+                android:layout_marginTop="5dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3.5"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginRight="-30dp"
+                    android:background="@drawable/sadow_bode"
+                    android:textAlignment="viewEnd"
+                    android:text="Xin chào mình là AIC bot, \nmình có thể giúp gì cho bạn">
+                </TextView>
+                <ImageView
+                    android:id="@+id/aiBot"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_weight="0.5"
+                    android:contentDescription="AIC Bot"
+                    android:src="@drawable/ai1" />
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>

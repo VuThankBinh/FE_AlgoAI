@@ -121,16 +121,48 @@
                 android:background="@null"
                 android:padding="12dp"/>
         </ScrollView>
-
-        <!-- Output -->
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Kết quả:"
+        android:textSize="16sp"
+        android:textColor="#424242"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"
+        android:layout_gravity="center_vertical"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="4"
+        android:layout_marginTop="5dp">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Kết quả:"
-            android:textSize="16sp"
-            android:textColor="#424242"
+            android:layout_weight="3.5"
+            android:textSize="12dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="-25dp"
+            android:background="@drawable/sadow_bode"
+            android:textAlignment="viewEnd"
+            android:text="Xin chào mình là AIC bot, \nmình có thể giúp gì cho bạn">
+        </TextView>
+        <ImageView
+            android:id="@+id/aiBot"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp"/>
+            android:layout_weight="0.5"
+            android:contentDescription="AIC Bot"
+            android:src="@drawable/ai1" />
+    </LinearLayout>
+</LinearLayout>
+        <!-- Output -->
+
 
         <ScrollView
             android:layout_width="match_parent"

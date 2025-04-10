@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.nckh.ApiConfig;
 import com.example.nckh.R;
 import com.example.nckh.model.BaiHoc;
@@ -20,6 +21,15 @@ import java.util.List;
 public class BaiHocAdapterNgang extends RecyclerView.Adapter<BaiHocAdapterNgang.BaiHocViewHolder> {
 
     private List<BaiHoc> baiHocList;
+    private OnItemClickListener listener;
+
+    public interface OnItemClickListener {
+        void onItemClick(BaiHoc baiHoc);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
+    }
 
     public BaiHocAdapterNgang(List<BaiHoc> baiHocList) {
         this.baiHocList = baiHocList;
@@ -35,51 +45,13 @@ public class BaiHocAdapterNgang extends RecyclerView.Adapter<BaiHocAdapterNgang.
     @Override
     public void onBindViewHolder(@NonNull BaiHocViewHolder holder, int position) {
         BaiHoc baiHoc = baiHocList.get(position);
-        holder.tvTieuDe.setText(baiHoc.getTieuDe());
-
-        String trangThai = "";
-        if (baiHoc.getTrangThai().equals("dang_hoc")) {
-            trangThai = "Đang học";
-        } else if (baiHoc.getTrangThai().equals("chua_hoc")) {
-            trangThai = "Chưa học";
-        } else if (baiHoc.getTrangThai().equals("da_hoc")) {
-            trangThai = "Đã học";
-        }
-        holder.tvTrangThai.setText("Trạng thái: " + trangThai);
-        if(baiHoc.isDaLamQuiz()){
-            String mucdo="";
-            if(baiHoc.getMucDoQuiz().equals("co_ban")) mucdo="Cơ bản";
-            else if(baiHoc.getMucDoQuiz().equals("trung_binh")) mucdo="Trung bình";
-            else if(baiHoc.getMucDoQuiz().equals("nang_cao")) mucdo="Nâng cao";
-            holder.noidung1.setText("Trắc nghiệm: "+baiHoc.getDiemQuiz() +" điểm ");
-            holder.tvDiem1.setText("Mức độ: "+mucdo);
-        }
-        else {
-            holder.noidung1.setText("Trắc nghiệm: Chưa làm");
-            holder.tvDiem1.setText("");
-        }
-        if(baiHoc.isDaLamCode()){
-
-            String mucdo="";
-            if(baiHoc.getMucDoCode().equals("co_ban")) mucdo="Cơ bản";
-            else if(baiHoc.getMucDoCode().equals("trung_binh")) mucdo="Trung bình";
-            else if(baiHoc.getMucDoCode().equals("nang_cao")) mucdo="Nâng cao";
-            holder.noidung2.setText("Code: "+baiHoc.getDiemCode() +" điểm ");
-            holder.tvDiem2.setText("Mức độ: "+mucdo);
-        }
-        else {
-            holder.noidung2.setText("Code: Chưa làm");
-            holder.tvDiem2.setText("");
-        }
-        if (baiHoc.getAnhBaiHoc() != null && !baiHoc.getAnhBaiHoc().isEmpty()) {
-            Picasso.get()
-                    .load(ApiConfig.get_imagge_ENDPOINT + baiHoc.getAnhBaiHoc())
-                    .placeholder(R.drawable.user)
-                    .error(R.drawable.user)
-                    .into(holder.imgBaiHoc);
-        } else {
-            holder.imgBaiHoc.setImageResource(R.drawable.user);
-        }
+        holder.bind(baiHoc);
+        
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onItemClick(baiHoc);
+            }
+        });
     }
 
     @Override
@@ -102,6 +74,50 @@ public class BaiHocAdapterNgang extends RecyclerView.Adapter<BaiHocAdapterNgang.
             tvDiem2 = itemView.findViewById(R.id.diem2);
             noidung1 = itemView.findViewById(R.id.noidung1);
             noidung2 = itemView.findViewById(R.id.noidung2);
+        }
+
+        public void bind(BaiHoc baiHoc) {
+            tvTieuDe.setText(baiHoc.getTieuDe());
+            if(baiHoc.getTrangThai().equals("chua_học"))
+                tvTrangThai.setText("Trạng thái: Chưa học");
+            if(baiHoc.getTrangThai().equals("dang_hoc"))
+                tvTrangThai.setText("Trạng thái: Đang học");
+            if(baiHoc.getTrangThai().equals("da_hoc"))
+                tvTrangThai.setText("Trạng thái: Hoàn thành");
+
+            if(baiHoc.isDaLamQuiz()){
+                String mucdo="";
+                if(baiHoc.getMucDoQuiz().equals("co_ban")) mucdo="Cơ bản";
+                else if(baiHoc.getMucDoQuiz().equals("trung_binh")) mucdo="Trung bình";
+                else if(baiHoc.getMucDoQuiz().equals("nang_cao")) mucdo="Nâng cao";
+                noidung1.setText("Trắc nghiệm: "+baiHoc.getDiemQuiz() +" điểm ");
+                tvDiem1.setText("Mức độ: "+mucdo);
+            }
+            else {
+                noidung1.setText("Trắc nghiệm: Chưa làm");
+                tvDiem1.setText("");
+            }
+            if(baiHoc.isDaLamCode()){
+                String mucdo="";
+                if(baiHoc.getMucDoCode().equals("co_ban")) mucdo="Cơ bản";
+                else if(baiHoc.getMucDoCode().equals("trung_binh")) mucdo="Trung bình";
+                else if(baiHoc.getMucDoCode().equals("nang_cao")) mucdo="Nâng cao";
+                noidung2.setText("Code: "+baiHoc.getDiemCode() +" điểm ");
+                tvDiem2.setText("Mức độ: "+mucdo);
+            }
+            else {
+                noidung2.setText("Code: Chưa làm");
+                tvDiem2.setText("");
+            }
+            if (baiHoc.getAnhBaiHoc() != null && !baiHoc.getAnhBaiHoc().isEmpty()) {
+                Glide.with(itemView.getContext())
+                        .load(ApiConfig.getFullUrl(ApiConfig.get_imagge_ENDPOINT + baiHoc.getAnhBaiHoc()))
+                        .placeholder(R.drawable.user)
+                        .error(R.drawable.user)
+                        .into(imgBaiHoc);
+            } else {
+                imgBaiHoc.setImageResource(R.drawable.user);
+            }
         }
     }
 }

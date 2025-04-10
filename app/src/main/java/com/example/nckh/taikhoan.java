@@ -17,6 +17,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.squareup.picasso.Picasso;
 
@@ -142,10 +143,11 @@ public class taikhoan extends AppCompatActivity {
                             tvStatus.setText(email);
 
                             if (avatar != null && !avatar.isEmpty()) {
-                                Picasso.get()
-                                        .load(avatar)
-                                        .placeholder(R.drawable.user) // trong khi tải
-                                        .error(R.drawable.user)       // lỗi thì dùng ảnh mặc định
+                                Glide.with(taikhoan.this)
+                                        .load(ApiConfig.getFullUrl(ApiConfig.get_imagge_ENDPOINT + avatar))
+                                        .placeholder(R.drawable.user)
+                                        .error(R.drawable.user)
+                                        .circleCrop() // hoặc .circleCrop() nếu muốn avatar tròn
                                         .into(avt);
                             } else {
                                 avt.setImageResource(R.drawable.user);

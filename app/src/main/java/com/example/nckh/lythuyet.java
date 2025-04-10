@@ -138,12 +138,39 @@ public class lythuyet extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setAdapter(adapter);
+
+        // Thêm sự kiện click cho adapter
+        adapter.setOnItemClickListener(new BaiHocAdapterNgang.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaiHoc baiHoc) {
+                openBaiTapLyThuyet(baiHoc);
+            }
+        });
     }
 
     private void setupRecyclerViewVertical(RecyclerView recyclerView, BaiHocAdapter adapter) {
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setAdapter(adapter);
+
+        // Thêm sự kiện click cho adapter
+        adapter.setOnItemClickListener(new BaiHocAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaiHoc baiHoc) {
+                openBaiTapLyThuyet(baiHoc);
+            }
+        });
+    }
+
+    private void openBaiTapLyThuyet(BaiHoc baiHoc) {
+        Intent intent = new Intent(this, baitai_lythuyet.class);
+        intent.putExtra("id_bai_hoc", baiHoc.getId());
+        intent.putExtra("tieu_de", baiHoc.getTieuDe());
+        intent.putExtra("noi_dung", baiHoc.getNoiDung());
+        intent.putExtra("link_youtube", baiHoc.getLinkYoutube());
+        intent.putExtra("link_mo_ta", baiHoc.getLinkMoTa());
+        intent.putExtra("anh_bai_hoc", baiHoc.getAnhBaiHoc());
+        startActivity(intent);
     }
 
     private void fetchBaiHoc(String trangThai) {

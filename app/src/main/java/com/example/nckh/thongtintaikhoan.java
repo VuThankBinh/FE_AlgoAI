@@ -1,7 +1,9 @@
 package com.example.nckh;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -16,15 +18,20 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
+import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
 
+import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -40,6 +47,7 @@ import okhttp3.Response;
 public class thongtintaikhoan extends AppCompatActivity {
     private static final int PICK_IMAGE_REQUEST = 1;
     private static final int REQUEST_IMAGE_CAPTURE = 2;
+    private static final int REQUEST_PERMISSIONS = 3;
     private ImageView imgAvatar;
     private TextView txtChangeAvatar;
     private EditText edtHoTen, edtEmail, edtSDT;
@@ -86,9 +94,38 @@ public class thongtintaikhoan extends AppCompatActivity {
         txtChangeAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showImagePickerOptions();
+                checkAndRequestPermissions();
             }
         });
+    }
+
+    private void checkAndRequestPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            
+            ActivityCompat.requestPermissions(this,
+                new String[]{
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                },
+                REQUEST_PERMISSIONS);
+        } else {
+            showImagePickerOptions();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_PERMISSIONS) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                showImagePickerOptions();
+            } else {
+                Toast.makeText(this, "Cần cấp quyền để sử dụng tính năng này", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     private void showImagePickerOptions() {
@@ -158,63 +195,100 @@ public class thongtintaikhoan extends AppCompatActivity {
     }
 
     private void uploadImage(Uri imageUri) {
-
-
-        // Tạo file từ URI
-        File file = new File(imageUri.getPath());
-        RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), file);
-
-        // Tạo multipart request body
-        RequestBody requestBody = new MultipartBody.Builder()
-                .setType(MultipartBody.FORM)
-                .addFormDataPart("file", file.getName(), requestFile)
-                .build();
-
-        // Tạo request
-        Request request = new Request.Builder()
-                .url(ApiConfig.getFullUrl(ApiConfig.POST_UPLOAD_FILE_ENDPOINT))
-                .post(requestBody)
-                .build();
-
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                runOnUiThread(() ->
-                        Toast.makeText(thongtintaikhoan.this, "Lỗi upload ảnh: " + e.getMessage(), Toast.LENGTH_SHORT).show()
-                );
+        try {
+            // Mở InputStream từ Uri
+            InputStream inputStream = getContentResolver().openInputStream(imageUri);
+            if (inputStream == null) {
+                Toast.makeText(this, "Không thể mở ảnh", Toast.LENGTH_SHORT).show();
+                return;
             }
 
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                try {
+            // Đọc byte[] từ InputStream
+            byte[] fileBytes = IOUtils.toByteArray(inputStream);
+            inputStream.close();
+
+            // Tạo tên file ngẫu nhiên
+            String fileName = "image_" + System.currentTimeMillis() + ".png";
+
+            // Tạo request body cho file
+            RequestBody requestFile = RequestBody.create(MediaType.parse("image/png"), fileBytes);
+
+            // Tạo MultipartBody
+            MultipartBody.Builder builder = new MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart("file", fileName, requestFile);
+
+            RequestBody requestBody = builder.build();
+
+            // Gửi request bằng OkHttp
+            Request request = new Request.Builder()
+                    .url("http://192.168.1.10:8080/api/upload")
+                    .addHeader("accept", "*/*")
+                    .post(requestBody)
+                    .build();
+
+            System.out.println("Upload URL: " + request.url().toString());
+            System.out.println("fileName: "+fileName);
+            // Lưu URL ảnh vào SharedPreferences
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("avatar", fileName);
+            editor.apply();
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    runOnUiThread(() -> {
+                        Toast.makeText(thongtintaikhoan.this, "Lỗi upload ảnh: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        System.out.println("Upload error: " + e.getMessage());
+                    });
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
                     String responseBody = response.body().string();
-                    JSONObject jsonResponse = new JSONObject(responseBody);
+                    System.out.println("Upload response: " + responseBody);
 
                     if (response.isSuccessful()) {
-                        String fileUrl = jsonResponse.getString("fileUrl");
-                        String fileName = fileUrl.substring(fileUrl.lastIndexOf('/') + 1);
-                        // Lưu URL ảnh vào SharedPreferences
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putString("avatar", fileName);
-                        editor.apply();
+                        try {
+                            JSONObject jsonResponse = new JSONObject(responseBody);
 
-                        runOnUiThread(() ->
-                                Toast.makeText(thongtintaikhoan.this, "Upload ảnh thành công", Toast.LENGTH_SHORT).show()
-                        );
+
+                            runOnUiThread(() -> {
+                                Toast.makeText(thongtintaikhoan.this, "Upload ảnh thành công", Toast.LENGTH_SHORT).show();
+                                Picasso.get()
+                                        .load(ApiConfig.getFullUrl(ApiConfig.get_imagge_ENDPOINT + fileName))
+                                        .placeholder(R.drawable.user)
+                                        .error(R.drawable.user)
+                                        .into(imgAvatar);
+                            });
+                        } catch (JSONException e) {
+                            runOnUiThread(() -> {
+                                Toast.makeText(thongtintaikhoan.this, "Lỗi xử lý phản hồi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            });
+                        }
                     } else {
-                        String message = jsonResponse.getString("message");
-                        runOnUiThread(() ->
-                                Toast.makeText(thongtintaikhoan.this, "Lỗi: " + message, Toast.LENGTH_SHORT).show()
-                        );
+                        runOnUiThread(() -> {
+                            System.out.println("err upload: "+ response.toString());
+                            System.out.println("Response body: " + responseBody);
+                        });
                     }
-                } catch (Exception e) {
-                    runOnUiThread(() ->
-//                            Toast.makeText(thongtintaikhoan.this, "Lỗi xử lý dữ liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show()
-                            System.out.println("error data: "+e.toString())
-                    );
                 }
-            }
-        });
+            });
+
+        } catch (Exception e) {
+            Toast.makeText(this, "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            System.out.println("Error in uploadImage: " + e.getMessage());
+        }
+    }
+
+    private String getRealPathFromURI(Uri contentUri) {
+        String[] proj = {MediaStore.Images.Media.DATA};
+        android.database.Cursor cursor = getContentResolver().query(contentUri, proj, null, null, null);
+        if (cursor == null) return null;
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        String path = cursor.getString(column_index);
+        cursor.close();
+        return path;
     }
 
     private void loadUserInfo() {
@@ -259,10 +333,11 @@ public class thongtintaikhoan extends AppCompatActivity {
                             edtSDT.setText(phone);
 
                             if (avatar != null && !avatar.isEmpty()) {
-                                Picasso.get()
-                                        .load(ApiConfig.getFullUrl(ApiConfig.get_imagge_ENDPOINT+avatar))
-                                        .placeholder(R.drawable.user) // trong khi tải
-                                        .error(R.drawable.user)       // lỗi thì dùng ảnh mặc định
+                                Glide.with(thongtintaikhoan.this)
+                                        .load(ApiConfig.getFullUrl(ApiConfig.get_imagge_ENDPOINT + avatar))
+                                        .placeholder(R.drawable.user)
+                                        .error(R.drawable.user)
+                                        .circleCrop() // hoặc .circleCrop() nếu muốn avatar tròn
                                         .into(imgAvatar);
                             } else {
                                 imgAvatar.setImageResource(R.drawable.user);
@@ -286,13 +361,16 @@ public class thongtintaikhoan extends AppCompatActivity {
     private void updateUserInfo() {
         String tenDangNhap = edtHoTen.getText().toString().trim();
         String sdt = edtSDT.getText().toString().trim();
-        String avatarUrl = sharedPreferences.getString("avatar", "");
-        System.out.println("in4: name: "+tenDangNhap +" sdt: "+sdt+" avatar: "+avatarUrl);
+        String avatarFileName = sharedPreferences.getString("avatar", "");
+        
+        System.out.println("in4: name: "+tenDangNhap +" sdt: "+sdt+" avatar: "+avatarFileName);
+        
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("email", email);
             jsonObject.put("tenDangNhap", tenDangNhap);
-            jsonObject.put("anhDaiDien", avatarUrl);
+            jsonObject.put("anhDaiDien", avatarFileName);
+            jsonObject.put("sdt", sdt);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -301,6 +379,8 @@ public class thongtintaikhoan extends AppCompatActivity {
                 MediaType.parse("application/json"),
                 jsonObject.toString()
         );
+
+        System.out.println("Update user request body: " + jsonObject.toString());
 
         Request request = new Request.Builder()
                 .url(ApiConfig.getFullUrl(ApiConfig.POST_UPDATE_USER_ENDPOINT))
@@ -319,19 +399,10 @@ public class thongtintaikhoan extends AppCompatActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 try {
                     String responseBody = response.body().string();
-                    System.out.println("Response: " + responseBody); // Log response để debug
-
-                    if (responseBody.isEmpty()) {
-                        runOnUiThread(() ->
-                                Toast.makeText(thongtintaikhoan.this, "Không nhận được phản hồi từ server", Toast.LENGTH_SHORT).show()
-                        );
-                        return;
-                    }
-
-                    JSONObject jsonResponse = new JSONObject(responseBody);
+                    System.out.println("Update user response: " + responseBody);
 
                     if (response.isSuccessful()) {
-                        String message = jsonResponse.optString("message", "Cập nhật thành công");
+                        String message = "Cập nhật thành công";
                         
                         runOnUiThread(() -> {
                             Toast.makeText(thongtintaikhoan.this, message, Toast.LENGTH_SHORT).show();
@@ -339,20 +410,16 @@ public class thongtintaikhoan extends AppCompatActivity {
                             SharedPreferences.Editor editor = sharedPreferences.edit();
                             editor.putString("name", tenDangNhap);
                             editor.putString("phone", sdt);
+                            editor.putString("avatar", avatarFileName);
                             editor.apply();
                             finish();
-
                         });
                     } else {
-                        String errorMessage = jsonResponse.optString("message", "Có lỗi xảy ra");
+                        String errorMessage = "Có lỗi xảy ra";
                         runOnUiThread(() ->
                                 Toast.makeText(thongtintaikhoan.this, "Lỗi: " + errorMessage, Toast.LENGTH_SHORT).show()
                         );
                     }
-                } catch (JSONException e) {
-                    runOnUiThread(() ->
-                            Toast.makeText(thongtintaikhoan.this, "Lỗi định dạng dữ liệu từ server", Toast.LENGTH_SHORT).show()
-                    );
                 } catch (Exception e) {
                     runOnUiThread(() ->
                             Toast.makeText(thongtintaikhoan.this, "Lỗi xử lý dữ liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show()
