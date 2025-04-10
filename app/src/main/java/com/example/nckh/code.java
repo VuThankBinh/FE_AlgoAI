@@ -68,8 +68,6 @@ public class code extends AppCompatActivity implements SocketManager.SocketListe
         Intent intent = getIntent();
         idBaiHoc = intent.getIntExtra("baiHocId", 0);
 
-        // Kiểm tra bài code đã làm
-        kiemTraDaLamCode();
 
         // Thiết lập Spinner ngôn ngữ
         String[] languages = {"Python", "Java", "SQL", "C#", "JavaScript"};
