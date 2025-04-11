@@ -97,7 +97,7 @@ public class ThucHanhlistAdapter extends RecyclerView.Adapter<ThucHanhlistAdapte
 
         if (baiHoc.getAnhBaiHoc() != null && !baiHoc.getAnhBaiHoc().isEmpty()) {
             Picasso.get()
-                    .load(ApiConfig.get_imagge_ENDPOINT + baiHoc.getAnhBaiHoc())
+                    .load(ApiConfig.getFullUrl(ApiConfig.get_imagge_ENDPOINT + baiHoc.getAnhBaiHoc()))
                     .placeholder(R.drawable.user)
                     .error(R.drawable.user)
                     .into(holder.imgBaiHoc);

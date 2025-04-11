@@ -1,8 +1,11 @@
 package com.example.nckh.adapter;
 
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -14,25 +17,35 @@ import com.example.nckh.model.ChatMessage;
 
 import java.util.List;
 
-public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder> {
+public class ChatAdapter2 extends RecyclerView.Adapter<ChatAdapter2.ChatViewHolder> {
     private List<ChatMessage> messages;
+    private OnItemClickListener onItemClickListener;
 
-    public ChatAdapter(List<ChatMessage> messages) {
+    public interface OnItemClickListener {
+        void onItemClick(int position, ChatMessage message);
+    }
+
+    public ChatAdapter2(List<ChatMessage> messages) {
         this.messages = messages;
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.onItemClickListener = listener;
     }
 
     @NonNull
     @Override
     public ChatViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_chat_message, parent, false);
+                .inflate(R.layout.item_chat_message2, parent, false);
         return new ChatViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ChatViewHolder holder, int position) {
         ChatMessage message = messages.get(position);
-        
+//        holder.bind(message);
+
         if (message.isUserMessage()) {
             holder.layoutUserMessage.setVisibility(View.VISIBLE);
             holder.layoutAIMessage.setVisibility(View.GONE);
@@ -42,6 +55,13 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
             holder.layoutAIMessage.setVisibility(View.VISIBLE);
             holder.tvAIMessage.setText(message.getMessage());
         }
+        // Chỉ cho phép click vào tin nhắn của người dùng
+        holder.itemView.setClickable(message.isUserMessage());
+        holder.itemView.setOnClickListener(v -> {
+            if (onItemClickListener != null && message.isUserMessage()) {
+                onItemClickListener.onItemClick(position, message);
+            }
+        });
     }
 
     @Override
@@ -52,6 +72,11 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
     public void addMessage(ChatMessage message) {
         messages.add(message);
         notifyItemInserted(messages.size() - 1);
+    }
+
+    public void clearMessages() {
+        messages.clear();
+        notifyDataSetChanged();
     }
 
     static class ChatViewHolder extends RecyclerView.ViewHolder {
@@ -67,5 +92,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
             tvUserMessage = itemView.findViewById(R.id.tvUserMessage);
             tvAIMessage = itemView.findViewById(R.id.tvAIMessage);
         }
+
+        public void bind(ChatMessage message) {
+
+        }
     }
-} 
+}

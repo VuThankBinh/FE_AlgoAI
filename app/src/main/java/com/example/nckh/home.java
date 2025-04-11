@@ -307,10 +307,11 @@ public class home extends AppCompatActivity {
 
 
                             if (anhBaiHoc != null && !anhBaiHoc.isEmpty()) {
-                                Picasso.get()
-                                        .load(ApiConfig.get_imagge_ENDPOINT+anhBaiHoc)
-                                        .placeholder(R.drawable.user) // trong khi tải
-                                        .error(R.drawable.user)       // lỗi thì dùng ảnh mặc định
+                                Glide.with(home.this)
+                                        .load(ApiConfig.getFullUrl(ApiConfig.get_imagge_ENDPOINT + anhBaiHoc))
+                                        .placeholder(R.drawable.user)
+                                        .error(R.drawable.user)
+                                        .centerCrop() // hoặc .circleCrop() nếu muốn avatar tròn
                                         .into(img_baihoc);
                             } else {
                                 img_baihoc.setImageResource(R.drawable.user);

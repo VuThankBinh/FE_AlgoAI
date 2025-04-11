@@ -227,11 +227,12 @@ public class thuchanhlist extends AppCompatActivity {
                     finish();
                     return true;
                 } else if (itemId == R.id.navigation_code) {
+
+                    return true;
+                } else if (itemId == R.id.navigation_practice) {
                     Intent intent = new Intent(thuchanhlist.this, lythuyet.class);
                     startActivity(intent);
                     finish();
-                    return true;
-                } else if (itemId == R.id.navigation_practice) {
                     return true;
                 } else if (itemId == R.id.navigation_profile) {
                     Intent intent = new Intent(thuchanhlist.this, taikhoan.class);

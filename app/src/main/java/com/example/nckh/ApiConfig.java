@@ -33,12 +33,26 @@ public class ApiConfig {
 
     public static final String NOP_BAI_QUIZ_ENDPOINT = "/api/nop-bai/quiz";
 
+    public static final String NOP_BAI_CODE_ENDPOINT = "/api/nop-bai/code";
     public static final String CAP_NHAT_TIEN_DO_ENDPOINT = "/api/tien-do/cap-nhat";
 
     public static final String Check_TienDo_quiz_ENDPOINT = "/api/nop-bai/kiem-tra-da-lam-quiz";
 
     public  static final  String get_quiz_completed_ENDPOINT = "/api/nop-bai/bai-tap-quiz-theo-muc-do-co-de-bai";
+
     public static final String Check_TienDo_code_ENDPOINT = "/api/nop-bai/kiem-tra-da-lam-code";
+
+    public static final String get_code_completed_ENDPOINT  = "/api/nop-bai/bai-tap-code-theo-muc-do-co-de-bai";
+
+    public static final String GET_code_excercise_ENDPOINT = "/api/bai-tap-code/theo-muc-do";
+    public static final String Post_cham_diem_code_ENDPOINT = "/api/code-grading/grade";
+    public static final String Post_save_phan_hoi_AI_ENDPOINT = "/api/phan-hoi-ai/luu";
+    public static final String get_code_BY_LEVEL_ENDPOINT = "/api/nop-bai/kiem-tra/code/theo-muc-do";
+    public static final String NOP_BAI_CODE_AGAINT_ENDPOINT = "/api/nop-bai/code";
+    public static final String Get_phan_hoi_AI_ENDPOINT = "/api/phan-hoi-ai/";
+
+    public static final String excute_jdoode_ENDPOINT = "/api/code/execute";
+
 
     public static  String getSocketUrl (){return BASE_URL +":5000";  }
     // Phương thức để lấy URL đầy đủ

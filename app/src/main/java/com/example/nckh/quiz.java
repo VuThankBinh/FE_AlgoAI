@@ -3,6 +3,7 @@ package com.example.nckh;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -42,9 +43,9 @@ public class quiz extends AppCompatActivity {
     private List<View> cauHoiViews;
     private String mucDoHienTai = "co_ban";
     private OkHttpClient client;
-    private Integer idBaiHoc=0;
-    private Integer idKhoaHoc=0;
-    private String tenBai="";
+    private Integer idBaiHoc = 0;
+    private Integer idKhoaHoc = 0;
+    private String tenBai = "";
     private TextView tvKetQua;
     private boolean daNopBai = false;
     private int diem = 0;
@@ -81,7 +82,7 @@ public class quiz extends AppCompatActivity {
         Intent intent = getIntent();
         idBaiHoc = intent.getIntExtra("baiHocId", 0);
         idKhoaHoc = intent.getIntExtra("idKhoaHoc", 0);
-        tenBai=intent.getStringExtra("nameBai");
+        tenBai = intent.getStringExtra("nameBai");
         System.out.println(tenBai);
         System.out.println(idBaiHoc);
         System.out.println(idKhoaHoc);
@@ -125,8 +126,9 @@ public class quiz extends AppCompatActivity {
     }
 
     private void kiemTraDaLamQuiz(String userId) {
-        String url = ApiConfig.getFullUrl(ApiConfig.Check_TienDo_quiz_ENDPOINT) + "?idNguoiDung=" + userId + "&idBaiHoc=" + idBaiHoc;
-        
+        String url = ApiConfig.getFullUrl(ApiConfig.Check_TienDo_quiz_ENDPOINT) + "?idNguoiDung=" + userId
+                + "&idBaiHoc=" + idBaiHoc;
+
         Request request = new Request.Builder()
                 .url(url)
                 .get()
@@ -159,13 +161,13 @@ public class quiz extends AppCompatActivity {
     private void kiemTraKetQuaCu() {
         // Ẩn điểm cũ trước khi kiểm tra
         tvKetQua.setVisibility(View.GONE);
-        
+
         SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
         String userId = sharedPreferences.getString("id", "");
 
         String url = ApiConfig.getFullUrl(ApiConfig.get_quiz_completed_ENDPOINT)
-                + "?idNguoiDung=" + userId 
-                + "&idBaiHoc=" + idBaiHoc 
+                + "?idNguoiDung=" + userId
+                + "&idBaiHoc=" + idBaiHoc
                 + "&mucDo=" + mucDoHienTai;
 
         Request request = new Request.Builder()
@@ -193,12 +195,12 @@ public class quiz extends AppCompatActivity {
                     try {
                         String responseData = response.body().string();
                         JSONArray jsonArray = new JSONArray(responseData);
-                        
+
                         if (jsonArray.length() > 0) {
                             JSONObject jsonObject = jsonArray.getJSONObject(0);
                             diemCu = jsonObject.getInt("diem");
                             dapAnCu = jsonObject.getString("dapAnNguoiDung");
-                            
+
                             runOnUiThread(() -> {
                                 hienThiKetQuaCu();
                             });
@@ -271,15 +273,15 @@ public class quiz extends AppCompatActivity {
 
     private void loadCauHoi() {
         Request request = new Request.Builder()
-                .url(ApiConfig.getFullUrl(ApiConfig.GET_CAU_HOI_ENDPOINT + "?mucDo=" + mucDoHienTai +"&idBaiHoc=" +idBaiHoc))
+                .url(ApiConfig.getFullUrl(
+                        ApiConfig.GET_CAU_HOI_ENDPOINT + "?mucDo=" + mucDoHienTai + "&idBaiHoc=" + idBaiHoc))
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                runOnUiThread(() ->
-                        Toast.makeText(quiz.this, "Lỗi kết nối: " + e.getMessage(), Toast.LENGTH_SHORT).show()
-                );
+                runOnUiThread(
+                        () -> Toast.makeText(quiz.this, "Lỗi kết nối: " + e.getMessage(), Toast.LENGTH_SHORT).show());
             }
 
             @Override
@@ -301,16 +303,13 @@ public class quiz extends AppCompatActivity {
                                     jsonObject.getString("luaChonC"),
                                     jsonObject.getString("luaChonD"),
                                     jsonObject.getString("dapAnDung"),
-                                    jsonObject.getString("mucDo")
-                            );
+                                    jsonObject.getString("mucDo"));
                             danhSachCauHoi.add(cauHoi);
                         }
 
                         runOnUiThread(() -> hienThiCauHoi());
                     } catch (JSONException e) {
-                        runOnUiThread(() ->
-                                Toast.makeText(quiz.this, "Lỗi xử lý dữ liệu", Toast.LENGTH_SHORT).show()
-                        );
+                        runOnUiThread(() -> Toast.makeText(quiz.this, "Lỗi xử lý dữ liệu", Toast.LENGTH_SHORT).show());
                     }
                 }
             }
@@ -362,12 +361,12 @@ public class quiz extends AppCompatActivity {
                 RadioButton radioButton = view.findViewById(selectedId);
                 int selectedIndex = radioGroup.indexOfChild(radioButton);
                 String selectedAnswer = String.valueOf((char) ('A' + selectedIndex));
-                
+
                 if (i > 0) {
                     dapAn.append("-");
                 }
                 dapAn.append(selectedAnswer);
-                
+
                 if (selectedAnswer.equals(danhSachCauHoi.get(i).getDapAnDung())) {
                     diem++;
                 }
@@ -440,57 +439,109 @@ public class quiz extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
         String userId = sharedPreferences.getString("id", "");
 
-        try {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("idNguoiDung", Integer.parseInt(userId));
-            jsonObject.put("idBaiHoc", idBaiHoc);
-            jsonObject.put("dapAn", dapAn);
-            jsonObject.put("mucDo", mucDoHienTai);
-            jsonObject.put("diem", diem);
-            jsonObject.put("ngayNop", new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(new java.util.Date()));
+        // Kiểm tra đã làm bài chưa
+        String url = ApiConfig.getFullUrl("/api/nop-bai/kiem-tra/quiz/theo-muc-do")
+                + "?idNguoiDung=" + userId
+                + "&idBaiHoc=" + idBaiHoc
+                + "&mucDo=" + mucDoHienTai;
 
-            RequestBody body = RequestBody.create(jsonObject.toString(), MediaType.parse("application/json"));
-            Request request = new Request.Builder()
-                    .url(ApiConfig.getFullUrl(ApiConfig.NOP_BAI_QUIZ_ENDPOINT))
-                    .post(body)
-                    .build();
+        Request checkRequest = new Request.Builder()
+                .url(url)
+                .get()
+                .build();
 
-            client.newCall(request).enqueue(new Callback() {
-                @Override
-                public void onFailure(Call call, IOException e) {
-                    runOnUiThread(() -> {
-                        System.out.println("err nop: " + e.toString());
-                    });
-                }
+        client.newCall(checkRequest).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                runOnUiThread(() -> {
+                    System.out.println("err kiem tra da lam: " + e.toString());
+                });
+            }
 
-                @Override
-                public void onResponse(Call call, Response response) throws IOException {
-                    runOnUiThread(() -> {
-                        if (response.isSuccessful()) {
-                            Toast.makeText(quiz.this, "Nộp bài thành công!", Toast.LENGTH_SHORT).show();
-                            // Chỉ cập nhật tiến độ nếu là lần đầu làm quiz
-                            kiemTraDaLamQuiz(userId);
-                            if (!daLamQuiz) {
-                                capNhatTienDo();
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    try {
+                        String responseData = response.body().string();
+                        boolean daLam = Boolean.parseBoolean(responseData);
+
+                        // Nộp bài
+                        try {
+                            JSONObject nopBaiJson = new JSONObject();
+                            nopBaiJson.put("idNguoiDung", Integer.parseInt(userId));
+                            nopBaiJson.put("idBaiHoc", idBaiHoc);
+                            nopBaiJson.put("dapAn", dapAn);
+                            nopBaiJson.put("mucDo", mucDoHienTai);
+                            nopBaiJson.put("diem", diem);
+                            nopBaiJson.put("ngayNop", new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(new java.util.Date()));
+
+                            RequestBody body = RequestBody.create(nopBaiJson.toString(), MediaType.parse("application/json"));
+
+                            Request.Builder requestBuilder = new Request.Builder();
+                            if (daLam) {
+                                requestBuilder = new Request.Builder()
+                                        .url(ApiConfig.getFullUrl(ApiConfig.NOP_BAI_QUIZ_ENDPOINT) + "?idNguoiDung=" + userId + "&idBaiHoc=" + idBaiHoc);
+                                requestBuilder.put(body);
+                                requestBuilder.header("Content-Type", "application/json");
+                                System.out.println("da lam roi");
+                                System.out.println(ApiConfig.getFullUrl(ApiConfig.NOP_BAI_QUIZ_ENDPOINT) + "?idNguoiDung=" + userId + "&idBaiHoc=" + idBaiHoc);
+                                System.out.println(nopBaiJson);
                             } else {
-                                finish();
+                                requestBuilder = new Request.Builder()
+                                        .url(ApiConfig.getFullUrl(ApiConfig.NOP_BAI_QUIZ_ENDPOINT));
+                                requestBuilder.post(body);
+                                requestBuilder.header("Content-Type", "application/json");
                             }
-                        } else {
-                            System.out.println("err nop: " + response.toString());
+
+                            Request request = requestBuilder.build();
+
+                            client.newCall(request).enqueue(new Callback() {
+                                @Override
+                                public void onFailure(Call call, IOException e) {
+                                    runOnUiThread(() -> {
+                                        System.out.println("err nop: " + e.toString());
+                                    });
+                                }
+
+                                @Override
+                                public void onResponse(Call call, Response response) throws IOException {
+                                    runOnUiThread(() -> {
+                                        if (response.isSuccessful()) {
+                                            Toast.makeText(quiz.this, "Nộp bài thành công!", Toast.LENGTH_SHORT).show();
+                                            // Chỉ cập nhật tiến độ nếu là lần đầu làm quiz
+                                            if (!daLam) {
+                                                capNhatTienDo();
+                                            } else {
+                                                finish();
+                                            }
+                                        } else {
+                                            System.out.println("err nop: " + response.toString());
+                                        }
+                                    });
+                                }
+                            });
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            runOnUiThread(() -> {
+                                Toast.makeText(quiz.this, "Lỗi tạo dữ liệu nộp bài", Toast.LENGTH_SHORT).show();
+                            });
                         }
-                    });
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        runOnUiThread(() -> {
+                            Toast.makeText(quiz.this, "Lỗi đọc kết quả", Toast.LENGTH_SHORT).show();
+                        });
+                    }
                 }
-            });
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Lỗi tạo dữ liệu nộp bài", Toast.LENGTH_SHORT).show();
-        }
+            }
+        });
     }
 
     private void capNhatTienDo() {
         SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
         String userId = sharedPreferences.getString("id", "");
-        RequestBody body = RequestBody.create(new byte[0], null);;
+        RequestBody body = RequestBody.create(new byte[0], null);
+        ;
 
 // Hoặc nếu server yêu cầu MediaType cụ thể (ví dụ: JSON)
 // MediaType JSON = MediaType.parse("application/json; charset=utf-8");

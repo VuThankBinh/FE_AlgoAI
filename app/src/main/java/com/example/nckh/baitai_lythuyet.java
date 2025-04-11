@@ -174,48 +174,64 @@ public class baitai_lythuyet extends AppCompatActivity {
 
     private void sendMessageToAPI(String message) {
         SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
-        sessionId = sharedPreferences.getString("sessionId", "");
-        String url = ApiConfig.getFullUrl(ApiConfig.POST_CHAT_ENDPOINT) + message + "&sessionId=" + sessionId;
+        String userId = sharedPreferences.getString("id", "");
 
-        RequestBody body = RequestBody.create("", null);
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("message", message);
+            jsonObject.put("userId", userId);
 
-        Request request = new Request.Builder()
-                .url(url)
+            RequestBody body = RequestBody.create(
+                jsonObject.toString(),
+                okhttp3.MediaType.parse("application/json")
+            );
+
+            Request request = new Request.Builder()
+                .url(ApiConfig.getFullUrl(ApiConfig.POST_CHAT_ENDPOINT))
                 .post(body)
+                .header("Content-Type", "application/json")
                 .build();
 
-        System.out.println(url);
+            System.out.println("url chat: " + ApiConfig.getFullUrl(ApiConfig.POST_CHAT_ENDPOINT));
+            System.out.println("body chat: " + jsonObject.toString());
 
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                runOnUiThread(() -> {
-                    Toast.makeText(baitai_lythuyet.this, "Lỗi kết nối: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    final String responseBody = response.body().string();
-                    final String[] reply = {""};
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
                     runOnUiThread(() -> {
-                        try {
-                            JSONObject responseJson = new JSONObject(responseBody);
-                            reply[0] = responseJson.getString("content");
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        chatAdapter.addMessage(new ChatMessage(reply[0], false));
-                        rvChatMessages.smoothScrollToPosition(chatAdapter.getItemCount() - 1);
-                    });
-                } else {
-                    runOnUiThread(() -> {
-                        Toast.makeText(baitai_lythuyet.this, "Lỗi phản hồi từ server", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(baitai_lythuyet.this, "Lỗi kết nối: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     });
                 }
-            }
-        });
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        try {
+                            String responseData = response.body().string();
+                            JSONObject jsonResponse = new JSONObject(responseData);
+                            String reply = jsonResponse.getString("content");
+
+                            runOnUiThread(() -> {
+                                chatAdapter.addMessage(new ChatMessage(reply, false));
+                                rvChatMessages.smoothScrollToPosition(chatAdapter.getItemCount() - 1);
+                            });
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            runOnUiThread(() -> {
+                                Toast.makeText(baitai_lythuyet.this, "Lỗi xử lý phản hồi", Toast.LENGTH_SHORT).show();
+                            });
+                        }
+                    } else {
+                        runOnUiThread(() -> {
+                            Toast.makeText(baitai_lythuyet.this, "Lỗi phản hồi từ server", Toast.LENGTH_SHORT).show();
+                        });
+                    }
+                }
+            });
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Lỗi tạo dữ liệu gửi đi", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void showMinhHoa(Context context, String webUrl) {

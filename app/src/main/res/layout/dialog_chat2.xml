@@ -50,7 +50,7 @@
             android:id="@+id/btnQuestion1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Giải thích bài học này"
+            android:text="Các bước của thuật toán"
             android:layout_marginBottom="8dp"
             android:background="@drawable/btn_question_background" />
 
@@ -58,7 +58,7 @@
             android:id="@+id/btnQuestion2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Cho ví dụ về bài học"
+            android:text="Mã giả của thuật toán"
             android:layout_marginBottom="8dp"
             android:background="@drawable/btn_question_background" />
 
@@ -66,7 +66,14 @@
             android:id="@+id/btnQuestion3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Làm thế nào để áp dụng bài học này?"
+            android:layout_marginBottom="8dp"
+            android:text="Gợi ý test case"
+            android:background="@drawable/btn_question_background" />
+        <Button
+            android:id="@+id/btnQuestion4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Gợi ý fix lỗi"
             android:background="@drawable/btn_question_background" />
     </LinearLayout>
 
@@ -84,6 +91,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="16dp"
+        android:visibility="gone"
         android:background="@color/cardview_light_background">
 
         <EditText

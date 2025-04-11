@@ -142,6 +142,15 @@
                         android:background="@drawable/sadow_bode"
                         android:orientation="vertical"
                         android:id="@+id/linner_baihocgannhat">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Lập trình OOP"
+                                    android:textStyle="bold"
+                                    android:textSize="16sp"
+                                    android:layout_gravity="center"
+                                    android:id="@+id/titlegannhat">
+                                </TextView>
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -156,14 +165,6 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:orientation="vertical">
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Lập trình OOP"
-                                    android:textStyle="bold"
-                                    android:textSize="16sp"
-                                    android:id="@+id/titlegannhat">
-                                </TextView>
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"

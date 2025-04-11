@@ -87,13 +87,26 @@
                 android:textColor="#424242"
                 android:layout_gravity="center_vertical"/>
 
-            <Spinner
-                android:id="@+id/spinnerLanguage"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="16dp"
-                android:background="@drawable/spinner_background"/>
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <Spinner
+                    android:id="@+id/spinnerMucDo"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"/>
+
+                <Spinner
+                    android:id="@+id/spinnerLanguage"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"/>
+            </LinearLayout>
         </LinearLayout>
 
         <!-- Code Editor -->
@@ -105,80 +118,105 @@
             android:textColor="#424242"
             android:layout_marginBottom="8dp"/>
 
-        <ScrollView
+        <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:background="@drawable/edittext_border"
-            android:fillViewport="true">
+            android:scrollbars="horizontal">
 
-            <EditText
-                android:id="@+id/etCode"
+            <ScrollView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:fillViewport="true"
+                android:scrollbars="vertical">
+
+                <EditText
+                    android:id="@+id/etCode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="Nhập code của bạn ở đây"
+                    android:gravity="start|top"
+                    android:inputType="textMultiLine"
+                    android:background="@null"
+                    android:padding="12dp"
+                    android:textIsSelectable="true"
+                    android:scrollHorizontally="true"
+                    android:scrollbars="none"/>
+            </ScrollView>
+        </HorizontalScrollView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Kết quả:"
+                android:textSize="16sp"
+                android:textColor="#424242"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
+                android:layout_gravity="center_vertical"/>
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Nhập code của bạn ở đây"
-                android:gravity="start|top"
-                android:inputType="textMultiLine"
-                android:background="@null"
-                android:padding="12dp"/>
-        </ScrollView>
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal">
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Kết quả:"
-        android:textSize="16sp"
-        android:textColor="#424242"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="8dp"
-        android:layout_gravity="center_vertical"/>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="4"
-        android:layout_marginTop="5dp">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="3.5"
-            android:textSize="12dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginRight="-25dp"
-            android:background="@drawable/sadow_bode"
-            android:textAlignment="viewEnd"
-            android:text="Xin chào mình là AIC bot, \nmình có thể giúp gì cho bạn">
-        </TextView>
-        <ImageView
-            android:id="@+id/aiBot"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_marginTop="16dp"
-            android:layout_weight="0.5"
-            android:contentDescription="AIC Bot"
-            android:src="@drawable/ai1" />
-    </LinearLayout>
-</LinearLayout>
+                android:orientation="horizontal"
+                android:weightSum="4"
+                android:layout_marginTop="5dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3.5"
+                    android:textSize="12dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginRight="-25dp"
+                    android:background="@drawable/sadow_bode"
+                    android:textAlignment="viewEnd"
+                    android:text="Xin chào mình là AIC bot, \nmình có thể giúp gì cho bạn">
+                </TextView>
+                <ImageView
+                    android:id="@+id/aiBot"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_weight="0.5"
+                    android:contentDescription="AIC Bot"
+                    android:src="@drawable/ai1" />
+            </LinearLayout>
+        </LinearLayout>
         <!-- Output -->
 
 
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:background="#EEEEEE"
-            android:fillViewport="true">
 
-            <TextView
-                android:id="@+id/etKetQua"
+            <HorizontalScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="start|top"
-                android:padding="12dp"
-                android:textIsSelectable="true"/>
-        </ScrollView>
+                android:layout_height="200dp"
+                android:scrollbars="horizontal">
 
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:fillViewport="true"
+                    android:scrollbars="vertical">
+
+                    <TextView
+                        android:id="@+id/etKetQua"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="12dp"
+                        android:textIsSelectable="true"
+                        android:scrollHorizontally="true"
+                        android:text="Output được hiện ra ở đây" />
+                </ScrollView>
+            </HorizontalScrollView>
+
+        <Button
+            android:id="@+id/btnXemPhanHoi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Xem phản hồi AI"
+            android:visibility="gone" />
         <!-- Input -->
         <EditText
             android:id="@+id/input"

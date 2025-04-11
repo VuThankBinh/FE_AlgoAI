@@ -13,7 +13,15 @@ public class ChatMessage {
         return message;
     }
 
-    public boolean isUser() {
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public boolean isUserMessage() {
         return isUser;
+    }
+
+    public void setUser(boolean user) {
+        isUser = user;
     }
 } 

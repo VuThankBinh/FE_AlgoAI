@@ -63,7 +63,12 @@ public class SocketManager {
 
         socket.on("output", args -> {
             if (listener != null) {
-                listener.onOutput(args[0].toString());
+                String output = args[0].toString();
+                if (output.contains("input(") || output.contains("Nhập")) {
+                    listener.onOutput(output);
+                } else {
+                    listener.onOutput(output + "\n");
+                }
             }
         });
 
