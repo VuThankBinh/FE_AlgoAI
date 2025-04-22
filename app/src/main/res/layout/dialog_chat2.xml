@@ -60,7 +60,7 @@
             android:layout_height="wrap_content"
             android:text="Mã giả của thuật toán"
             android:layout_marginBottom="8dp"
-            android:background="@drawable/btn_question_background" />
+            android:backgroundTint="@color/colorPrimary" />
 
         <Button
             android:id="@+id/btnQuestion3"
@@ -68,13 +68,13 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:text="Gợi ý test case"
-            android:background="@drawable/btn_question_background" />
+            android:backgroundTint="#F4034B"  />
         <Button
             android:id="@+id/btnQuestion4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Gợi ý fix lỗi"
-            android:background="@drawable/btn_question_background" />
+            android:backgroundTint="#4CAF50" />
     </LinearLayout>
 
     <!-- Chat Messages -->

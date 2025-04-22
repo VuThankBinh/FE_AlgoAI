@@ -199,6 +199,12 @@ public class code extends AppCompatActivity implements SocketManager.SocketListe
             isExecuting = true;
             etInput.setEnabled(false);
 
+            // Nếu là SQL thì gửi request trực tiếp đến API
+            if (language.equals("sql")) {
+                executeSQLCode(code);
+                return;
+            }
+
             // Gửi code lên server
             socketManager.executeCode(code, language, "");
         });
@@ -1360,5 +1366,58 @@ public class code extends AppCompatActivity implements SocketManager.SocketListe
                 }
             }
         });
+    }
+
+    private void executeSQLCode(String code) {
+        try {
+            JSONObject jsonObject = new JSONObject();
+            // Chuyển đổi ký tự xuống dòng thành dấu cách
+            String cleanSQL = code.replace("\n", " ");
+            
+            jsonObject.put("versionIndex", "3");
+            jsonObject.put("stdin", "");
+            jsonObject.put("clientId", "37b74c2b9f31a362ad8ecb4ecbb22441");
+            jsonObject.put("language", "sql");
+            jsonObject.put("clientSecret", "c01683242339952959b606fa035fbaeb59b6894fb11bf3dfa8415994c0b5ba0c");
+            jsonObject.put("script", cleanSQL);
+
+            System.out.println("executeSQLCode: " + jsonObject.toString());
+            RequestBody body = RequestBody.create(jsonObject.toString(), MediaType.parse("application/json"));
+            Request request = new Request.Builder()
+                    .url(ApiConfig.getFullUrl("/api/code/execute"))
+                    .post(body)
+                    .build();
+
+            new Thread(() -> {
+                try {
+                    Response response = client.newCall(request).execute();
+                    String responseData = response.body().string();
+
+                    // Parse JSON và lấy output
+                    JSONObject jsonResponse = new JSONObject(responseData);
+                    JSONObject data = jsonResponse.optJSONObject("data");
+                    String output = data != null ? data.optString("output") : "Không có output";
+
+                    runOnUiThread(() -> {
+                        tvKetQua.setVisibility(View.VISIBLE);
+                        if (response.isSuccessful()) {
+                            tvKetQua.setText(output);  // In ra output
+                        } else {
+                            tvKetQua.setText(output);
+                        }
+                    });
+                } catch (IOException | JSONException e) {
+                    runOnUiThread(() -> {
+                        tvKetQua.setVisibility(View.VISIBLE);
+                        tvKetQua.setText("Lỗi: Không thể kết nối đến server");
+                        Toast.makeText(code.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+                    });
+                }
+            }).start();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            tvKetQua.setVisibility(View.VISIBLE);
+            tvKetQua.setText("Lỗi: Không thể tạo request");
+        }
     }
 }

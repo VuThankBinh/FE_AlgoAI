@@ -52,7 +52,7 @@
             android:layout_height="wrap_content"
             android:text="Giải thích bài học này"
             android:layout_marginBottom="8dp"
-            android:background="@drawable/btn_question_background" />
+            android:backgroundTint="@color/colorPrimary" />
 
         <Button
             android:id="@+id/btnQuestion2"
@@ -60,14 +60,14 @@
             android:layout_height="wrap_content"
             android:text="Cho ví dụ về bài học"
             android:layout_marginBottom="8dp"
-            android:background="@drawable/btn_question_background" />
+            android:backgroundTint="#F4034B" />
 
         <Button
             android:id="@+id/btnQuestion3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Làm thế nào để áp dụng bài học này?"
-            android:background="@drawable/btn_question_background" />
+            android:backgroundTint="#4CAF50" />
     </LinearLayout>
 
     <!-- Chat Messages -->

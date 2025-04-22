@@ -2,7 +2,7 @@ package com.example.nckh;
 
 public class ApiConfig {
     // Base URL của API
-    public static final String BASE_URL = "http://192.168.1.10"; // Thay thế bằng URL thực tế của API
+    public static final String BASE_URL = "http://192.168.250.139"; // Thay thế bằng URL thực tế của API
 
     // Các endpoint
     public static final String REGISTER_ENDPOINT = "/api/user/register";

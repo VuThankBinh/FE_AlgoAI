@@ -113,6 +113,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/btn_tracnghiem"
                     android:layout_weight="1"
+                    android:backgroundTint="@color/colorPrimary"
                     android:text="Trắc nghiệm">
                 </Button>
                 <Button
@@ -120,6 +121,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/btn_code"
                     android:text="Lập trình"
+                    android:backgroundTint="#4CAF50"
                     android:layout_weight="1"
                     android:layout_marginLeft="5dp">
                 </Button>
